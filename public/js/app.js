@@ -2344,6 +2344,28 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
  // import { MultiSelect } from "vue-search-select";
 // import { ModelListSelect } from "vue-search-select";
@@ -2364,6 +2386,16 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
+      countries: [{
+        id: 1,
+        name: 'USA'
+      }, {
+        id: 2,
+        name: 'CAD'
+      }, {
+        id: 3,
+        name: 'SRB'
+      }],
       options: [{
         value: "1",
         text: "aa" + " - " + "1"
@@ -43122,66 +43154,73 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("div", [
-      _c("h3", [_vm._v("General information")]),
-      _vm._v(" "),
-      _c("br"),
-      _vm._v(" "),
-      _c("div", { staticClass: "col-md-12 " }, [
-        _c("table", { staticClass: "table table-striped text-left" }, [
-          _c("thead", { staticClass: "thead-dark" }, [
-            _c("th", { attrs: { scope: "col" } }, [
-              _vm._v(
-                "\n          DOCUMENT CHECK LIST TO COMPLETE THIS SPECIFICATION\n        "
-              )
+      _c("div", { staticClass: "box " }, [
+        _c("div", { staticClass: "col-md-12 text-left" }, [
+          _c("h4", [
+            _vm._v("\n                1.\n                "),
+            _c("span", { staticClass: "text-warning" }, [
+              _vm._v("GENERAL INFORMATION")
             ])
           ]),
           _vm._v(" "),
-          _c("tbody", [
-            _c("tr", [
-              _c("td", { staticClass: "dim2 font-sm" }, [
-                _vm._v("Food Safety Certificates &")
-              ])
-            ]),
-            _vm._v(" "),
-            _c("tr", [
-              _c("td", { staticClass: "dim2 font-sm" }, [
+          _c("table", { staticClass: "table table-striped text-left" }, [
+            _c("thead", { staticClass: "thead-dark" }, [
+              _c("th", { attrs: { scope: "col" } }, [
                 _vm._v(
-                  "\n            Nutritional test reports - Certificate of Analysis\n          "
+                  "\n                    DOCUMENT CHECK LIST TO COMPLETE THIS SPECIFICATION\n                "
                 )
               ])
             ]),
             _vm._v(" "),
-            _c("tr", [
-              _c("td", { staticClass: "dim2 font-sm" }, [
-                _vm._v(
-                  "\n            Product Manufacturing flow chart\n          "
-                )
-              ])
-            ]),
-            _vm._v(" "),
-            _c("tr", [
-              _c("td", { staticClass: "dim2 font-sm" }, [_vm._v("HACCPP Plan")])
-            ]),
-            _vm._v(" "),
-            _c("tr", [
-              _c("td", { staticClass: "dim2 font-sm" }, [
-                _vm._v("Allergen Mangement Plan")
-              ])
-            ]),
-            _vm._v(" "),
-            _c("tr", [
-              _c("td", { staticClass: "dim2 font-sm" }, [
-                _vm._v(
-                  "\n            Relevant certifications & Claim Verification: Organic, Kosher,\n            etc.\n          "
-                )
+            _c("tbody", [
+              _c("tr", [
+                _c("td", { staticClass: "dim2 font-sm" }, [
+                  _vm._v("Food Safety Certificates &")
+                ])
+              ]),
+              _vm._v(" "),
+              _c("tr", [
+                _c("td", { staticClass: "dim2 font-sm" }, [
+                  _vm._v(
+                    "\n                        Nutritional test reports - Certificate of Analysis\n                    "
+                  )
+                ])
+              ]),
+              _vm._v(" "),
+              _c("tr", [
+                _c("td", { staticClass: "dim2 font-sm" }, [
+                  _vm._v(
+                    "\n                        Product Manufacturing flow chart\n                    "
+                  )
+                ])
+              ]),
+              _vm._v(" "),
+              _c("tr", [
+                _c("td", { staticClass: "dim2 font-sm" }, [
+                  _vm._v("HACCPP Plan")
+                ])
+              ]),
+              _vm._v(" "),
+              _c("tr", [
+                _c("td", { staticClass: "dim2 font-sm" }, [
+                  _vm._v("Allergen Mangement Plan")
+                ])
+              ]),
+              _vm._v(" "),
+              _c("tr", [
+                _c("td", { staticClass: "dim2 font-sm" }, [
+                  _vm._v(
+                    "\n                        Relevant certifications & Claim Verification: Organic, Kosher,\n                        etc.\n                    "
+                  )
+                ])
               ])
             ])
-          ])
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "col-md-12 text-right" }, [
-          _c("button", { staticClass: "btn btn-success pull-right" }, [
-            _vm._v("Next")
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "col-md-12 text-right" }, [
+            _c("button", { staticClass: "btn btn-success pull-right" }, [
+              _vm._v("Next")
+            ])
           ])
         ])
       ])
@@ -43306,9 +43345,9 @@ var render = function() {
                   _vm._v(" "),
                   _c("td", [
                     _vm._v(
-                      "\n                            " +
+                      "\n                        " +
                         _vm._s(ingredient.percentage) +
-                        "\n                        "
+                        "\n                    "
                     )
                   ]),
                   _vm._v(" "),
@@ -43337,19 +43376,19 @@ var render = function() {
                       },
                       [
                         _vm._v(
-                          "\n                                Edit\n                            "
+                          "\n                            Edit\n                        "
                         )
                       ]
                     ),
                     _vm._v(
-                      "\n                             \n                            "
+                      "\n                         \n                        "
                     ),
                     _c(
                       "button",
                       { staticClass: "btn btn-sm btn-danger btn-smaller" },
                       [
                         _vm._v(
-                          "\n                                x\n                            "
+                          "\n                            Delete\n                        "
                         )
                       ]
                     )
@@ -43377,7 +43416,58 @@ var render = function() {
               "tbody",
               _vm._l(_vm.ingredients, function(ingredient) {
                 return _c("tr", { key: ingredient.id }, [
-                  _c("td", [_vm._v("{{}}")])
+                  _c("td", [_vm._v(_vm._s(ingredient.name))]),
+                  _vm._v(" "),
+                  _c("td", [_vm._v(_vm._s(ingredient.percentage))]),
+                  _vm._v(" "),
+                  _c("td", [_vm._v(_vm._s(ingredient.percentage))]),
+                  _vm._v(" "),
+                  _c("td", [
+                    _c("input", {
+                      staticClass: "form-control",
+                      attrs: { type: "text" },
+                      domProps: { value: ingredient.supplier }
+                    })
+                  ]),
+                  _vm._v(" "),
+                  _c("td", [
+                    _c("input", {
+                      staticClass: "form-control",
+                      attrs: { type: "text" },
+                      domProps: { value: ingredient.supplier_location }
+                    })
+                  ]),
+                  _vm._v(" "),
+                  _c("td", [
+                    _c(
+                      "select",
+                      { staticClass: "form-control", attrs: { name: "" } },
+                      [
+                        _c("option", { attrs: { value: "999" } }, [
+                          _vm._v("Please select")
+                        ]),
+                        _vm._v(" "),
+                        _vm._l(_vm.countries, function(country) {
+                          return _c(
+                            "option",
+                            {
+                              domProps: {
+                                value: country.id,
+                                selected:
+                                  country.id === 1 && country.id
+                                    ? "selected"
+                                    : ""
+                              }
+                            },
+                            [_vm._v(" " + _vm._s(country.name))]
+                          )
+                        })
+                      ],
+                      2
+                    )
+                  ]),
+                  _vm._v(" "),
+                  _vm._m(4, true)
                 ])
               }),
               0
@@ -43448,7 +43538,7 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", { staticClass: "user-input", attrs: { width: "13%" } }, [
           _vm._v(
-            "\n                            % Single Ingredient\n                        "
+            "\n                        % Single Ingredient\n                    "
           )
         ]),
         _vm._v(" "),
@@ -43489,6 +43579,16 @@ var staticRenderFns = [
       _c("th", [_vm._v("Country of Origin")]),
       _vm._v(" "),
       _c("th", [_vm._v("Country Where Processed (if different)")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("td", [
+      _c("select", { staticClass: "form-control", attrs: { name: "" } }, [
+        _c("option", { attrs: { value: "999" } }, [_vm._v("Please select")])
+      ])
     ])
   }
 ]

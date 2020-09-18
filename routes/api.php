@@ -33,8 +33,11 @@ Route::get('ingredients/list',      function (Request $request) {
     $ing = new stdClass;
     $ing->name = 'Main Ingredient';
     $ing->percentage = '15';
+    $ing->supplier = 'My Supplier';
+    $ing->supplier_location = "NW 109th 33513, Miami, FL";
+    $ing->origin_country = '1';
     $ing->compound = [
-        ['name' => 'Regular Oil', 'percentage' => 11], ['name' => 'Olive Oil', 'percentage' => 25]
+        ['name' => 'Regular Oil', 'percentage' => 11, 'supplier' => 'David Jones'], ['name' => 'Olive Oil', 'percentage' => 25]
     ];
 
     array_push($toRet,$ing);
@@ -49,7 +52,7 @@ Route::get('ingredients/list',      function (Request $request) {
     ];
 
     array_push($toRet,$ing);
-    
+
 
     return response()->json($toRet, '200');
 });
