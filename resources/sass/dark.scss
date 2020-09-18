@@ -1,0 +1,183 @@
+$bodyColor: #343a40;
+$boxColor: #1c1e25;
+$boxColorWhite: #f9fafa;
+$inputBackground: #15161c;
+$baseText: #f8fafc;
+
+[data-theme="dark"] {
+  .ui.search.selection.dropdown>input.search, .ui.search.selection.dropdown>span.sizer {
+    background-color: $inputBackground !important;
+  }
+  .ui.selection.dropdown {
+    border: 0px !important;
+    color: white;
+    background: $inputBackground;
+  }
+  .form-control {
+    border: 0 !important;
+  }
+  .user-input {
+    color: #ffc107 !important;
+  }
+
+  background-color: $bodyColor !important;
+  color: #f8fafc;
+
+  .table td,
+  .table th {
+    // padding: 0.15rem;
+    vertical-align: top;
+    border-top: 1px solid  #343a40;
+  }
+
+  .ui.multiple.search.dropdown,
+  .ui.multiple.search.dropdown > input.search {
+    background-color: $inputBackground !important;
+  }
+
+  .ui.selection.dropdown .menu > .item {
+    color: $baseText !important;
+    border-top: 0.01rem solid $bodyColor;
+  }
+
+  .ui.selection.dropdown .menu {
+    background-color: $inputBackground !important;
+    color: $baseText !important;
+  }
+  //modal
+  .modal-content {
+    transition: all 0.2s;
+    background-color: $bodyColor !important;
+  }
+  .modal-header {
+    border-color: $boxColor;
+    color: #ffffff;
+  }
+  .modal-footer {
+    border-color: $boxColor;
+  }
+  .box-nav-left {
+    min-height: 100%;
+  }
+  .box {
+    background-color: $boxColor !important;
+    border-radius: 10px;
+    padding: 10px;
+    color: #f8fafc;
+    ul {
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+    li {
+      list-style-type: none;
+    }
+    li:hover:not(.router-link-active) {
+      background-color: gray;
+      a {
+        background-color: gray !important;
+        text-decoration: none;
+      }
+    }
+    a {
+      background-color: $boxColor !important;
+      color: #ffc358;
+      /*color: orange;*/
+    }
+    .router-link-active {
+      width: 100% !important;
+      background-color: #28a745 !important;
+      color: white !important;
+      border-radius: 3px;
+      a {
+        background-color: #28a745 !important;
+        color: white;
+      }
+    }
+  }
+
+  a {
+    background-color: $bodyColor !important;
+    /*color: orange;*/
+  }
+
+  input[type="text"] {
+    background: rgba(0, 0, 0, 0.25);
+    /*color: white;*/
+  }
+  select {
+    background: rgba(0, 0, 0, 0.25);
+  }
+  .form-control {
+    background-color: rgba(0, 0, 0, 0.25);
+    color: white;
+  }
+  .navbar,
+  .navbar-nav,
+  .nav-link {
+    background-color: $bodyColor !important;
+    color: #f8fafc !important;
+  }
+  .navbar > a {
+    color: #f8fafc;
+  }
+  .table {
+    color: #f8fafc;
+  }
+  .page-link {
+    background-color: $bodyColor !important;
+    color: #f8fafc;
+  }
+  .navbar-brand {
+    background-color: $bodyColor !important;
+    color: #f8fafc;
+  }
+  .shadow-sm {
+    box-shadow: 0 0.125rem 0.25rem rgba(111, 111, 111, 0.3) !important;
+  }
+
+  th > .input-header {
+    background-color: $bodyColor !important;
+    color: #ffc36d;
+  }
+  .container {
+    background-color: $bodyColor !important;
+    color: $bodyColor;
+  }
+  .field-title {
+    background-color: $bodyColor !important;
+    color: #ffc36d;
+  }
+
+  input[type="file"] {
+    background-color: $bodyColor !important;
+    color: #ffc36d;
+  }
+  p {
+    color: white;
+  }
+
+  ul > li {
+    color: #a9abad;
+  }
+  #app {
+    background-color: $bodyColor !important;
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+    color: $baseText;
+  }
+}
+
+#nav {
+  padding: 30px;
+
+  a {
+    font-weight: bold;
+    color: #2768aa;
+
+    &.router-link-exact-active {
+      color: #42b983;
+    }
+  }
+}

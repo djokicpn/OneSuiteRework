@@ -1,0 +1,68 @@
+$bodyColor: #f7f9fa;
+$boxColor: #1d2935;
+$boxColorWhite: #ffffff;
+$textColor: #373a41;
+$hoverColor: rgb(223, 223, 223);
+$linkColor: #000000;
+
+.box-nav-left {
+    min-height: 100%;
+}
+.box {
+    transition: all 0.2s;
+    box-shadow: 0 0.46875rem 2.1875rem rgba(4, 9, 20, 0.03),
+        0 0.9375rem 1.40625rem rgba(4, 9, 20, 0.03),
+        0 0.25rem 0.53125rem rgba(4, 9, 20, 0.05),
+        0 0.125rem 0.1875rem rgba(4, 9, 20, 0.03);
+    border-width: 0;
+
+    background-color: $boxColorWhite !important;
+    border-radius: 10px;
+    padding: 20px 10px 25px 10px !important;
+    color: $textColor;
+
+    ul {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    li {
+        list-style-type: none;
+    }
+    li:hover:not(.router-link-active) {
+        background-color: $hoverColor;
+        a {
+            background-color: $hoverColor !important;
+            text-decoration: none;
+        }
+    }
+    a {
+        background-color: $boxColorWhite !important;
+        color: $linkColor;
+        /*color: orange;*/
+    }
+    .router-link-active {
+        background-color: #28a745 !important;
+        color: white !important;
+        border-radius: 3px;
+        a {
+            background-color: #28a745 !important;
+            color: white;
+        }
+    }
+}
+#app {
+    background-color: $bodyColor !important;
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+    color: $textColor;
+}
+
+.home {
+    margin: 15px 15px 0;
+    height: 100%;
+}
+body {
+    background: $bodyColor;
+}
