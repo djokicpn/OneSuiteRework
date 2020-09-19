@@ -1,8 +1,9 @@
 <?php
 
+use App\Http\Resources\IngredientResource;
+use App\Item;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use PhpParser\Node\Expr\Cast\Object_;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,7 +28,12 @@ Route::post('posts', 'Api\\PostController@store');
 Route::get('posts/search',      'Api\\PostController@getFilteredPosts');
 Route::get('posts/filter',      'Api\\PostController@getPosts');
 
-Route::get('ingredients/list',      function (Request $request) {
+Route::get('ingredients/list',      'Api\\IngredientController@listAll');
+
+Route::get('ingredients/item',      function (Request $request) {
+    return response()->json(IngredientResource::collection(Item::find(1)->rawIngredients));
+});
+Route::get('ingredients/json',      function (Request $request) {
     $toRet = [];
 
     $ing = new stdClass;

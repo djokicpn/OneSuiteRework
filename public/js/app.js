@@ -2366,6 +2366,44 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
  // import { MultiSelect } from "vue-search-select";
 // import { ModelListSelect } from "vue-search-select";
@@ -2382,19 +2420,23 @@ __webpack_require__.r(__webpack_exports__);
   watch: {
     item: function item(_item) {
       console.log(_item);
+    },
+    selectedIngredient: function selectedIngredient(ing) {
+      console.log(ing);
     }
   },
   data: function data() {
     return {
+      selectedIngredient: {},
       countries: [{
         id: 1,
-        name: 'USA'
+        name: "USA"
       }, {
         id: 2,
-        name: 'CAD'
+        name: "CAD"
       }, {
         id: 3,
-        name: 'SRB'
+        name: "SRB"
       }],
       options: [{
         value: "1",
@@ -2422,7 +2464,7 @@ __webpack_require__.r(__webpack_exports__);
       items: [],
       lastSelectItem: {},
       name: "Michael",
-      showModal: false,
+      modalVisible: false,
       myCounter: 0
     };
   },
@@ -2430,12 +2472,17 @@ __webpack_require__.r(__webpack_exports__);
     this.renderTable();
   },
   methods: {
+    showModal: function showModal(ingredient) {
+      this.selectedIngredient = ingredient;
+      console.log(ingredient);
+      this.modalVisible = true;
+    },
     renderTable: function renderTable() {
       var _this = this;
 
       axios.get("/api/ingredients/list").then(function (response) {
         console.log(response.data);
-        _this.ingredients = response.data;
+        _this.ingredients = response.data.data;
       });
     },
     clickedSave: function clickedSave() {
@@ -43337,19 +43384,15 @@ var render = function() {
             _vm._v(" "),
             _c(
               "tbody",
-              _vm._l(_vm.ingredients, function(ingredient) {
+              _vm._l(_vm.ingredients, function(ingredient, index) {
                 return _c("tr", { key: ingredient.id }, [
-                  _c("th", { attrs: { scope: "row" } }, [_vm._v("1")]),
+                  _c("th", { attrs: { scope: "row" } }, [
+                    _vm._v(_vm._s(index + 1))
+                  ]),
                   _vm._v(" "),
                   _c("td", [_vm._v(_vm._s(ingredient.name))]),
                   _vm._v(" "),
-                  _c("td", [
-                    _vm._v(
-                      "\n                        " +
-                        _vm._s(ingredient.percentage) +
-                        "\n                    "
-                    )
-                  ]),
+                  _c("td", [_vm._v(_vm._s(ingredient.perc) + " %")]),
                   _vm._v(" "),
                   _c(
                     "td",
@@ -43357,7 +43400,14 @@ var render = function() {
                       return _c(
                         "span",
                         { key: compound.id, staticClass: "multi-wrap" },
-                        [_vm._v(_vm._s(compound.name))]
+                        [
+                          _vm._v(
+                            _vm._s(compound.name) +
+                              " (\n                                " +
+                              _vm._s(compound.compound_perc) +
+                              "% )"
+                          )
+                        ]
                       )
                     }),
                     0
@@ -43370,25 +43420,25 @@ var render = function() {
                         staticClass: "btn btn-sm btn-primary btn-smaller",
                         on: {
                           click: function($event) {
-                            _vm.showModal = true
+                            return _vm.showModal(ingredient)
                           }
                         }
                       },
                       [
                         _vm._v(
-                          "\n                            Edit\n                        "
+                          "\n                                Edit\n                            "
                         )
                       ]
                     ),
                     _vm._v(
-                      "\n                         \n                        "
+                      "\n                             \n                            "
                     ),
                     _c(
                       "button",
                       { staticClass: "btn btn-sm btn-danger btn-smaller" },
                       [
                         _vm._v(
-                          "\n                            Delete\n                        "
+                          "\n                                Delete\n                            "
                         )
                       ]
                     )
@@ -43414,11 +43464,17 @@ var render = function() {
             _vm._v(" "),
             _c(
               "tbody",
-              _vm._l(_vm.ingredients, function(ingredient) {
+              _vm._l(_vm.ingredients, function(ingredient, index) {
                 return _c("tr", { key: ingredient.id }, [
-                  _c("td", [_vm._v(_vm._s(ingredient.name))]),
+                  _c("td", { staticClass: "no-wrap" }, [
+                    _vm._v(
+                      "\n                            " +
+                        _vm._s(index + 1 + ". " + ingredient.name) +
+                        "\n                        "
+                    )
+                  ]),
                   _vm._v(" "),
-                  _c("td", [_vm._v(_vm._s(ingredient.percentage))]),
+                  _c("td", [_vm._v(_vm._s(ingredient.perc))]),
                   _vm._v(" "),
                   _c("td", [_vm._v(_vm._s(ingredient.percentage))]),
                   _vm._v(" "),
@@ -43451,6 +43507,7 @@ var render = function() {
                           return _c(
                             "option",
                             {
+                              key: country.id,
                               domProps: {
                                 value: country.id,
                                 selected:
@@ -43459,7 +43516,12 @@ var render = function() {
                                     : ""
                               }
                             },
-                            [_vm._v(" " + _vm._s(country.name))]
+                            [
+                              _vm._v(
+                                "\n                                    " +
+                                  _vm._s(country.name)
+                              )
+                            ]
                           )
                         })
                       ],
@@ -43476,7 +43538,7 @@ var render = function() {
         ])
       ]),
       _vm._v(" "),
-      _vm.showModal
+      _vm.modalVisible
         ? _c(
             "modal",
             {
@@ -43488,7 +43550,7 @@ var render = function() {
               },
               on: {
                 close: function($event) {
-                  _vm.showModal = false
+                  _vm.modalVisible = false
                 },
                 "save-clicked": _vm.clickedSave
               }
@@ -43503,7 +43565,47 @@ var render = function() {
                   },
                   expression: "item"
                 }
-              })
+              }),
+              _vm._v(" "),
+              _c("span", [
+                _vm._v(
+                  "Editing Ingredient: " + _vm._s(_vm.selectedIngredient.name)
+                )
+              ]),
+              _vm._v(" "),
+              _c("br"),
+              _c("br"),
+              _vm._v(" "),
+              _vm.selectedIngredient.compound.length > 0
+                ? _c(
+                    "div",
+                    [
+                      _c("span", [_vm._v("Compounds:")]),
+                      _vm._v(" "),
+                      _c("br"),
+                      _c("br"),
+                      _vm._v(" "),
+                      _vm._l(_vm.selectedIngredient.compound, function(
+                        compound
+                      ) {
+                        return _c("p", { key: compound.id }, [
+                          _vm._v(
+                            "\n            " +
+                              _vm._s(compound.name) +
+                              "\n        "
+                          )
+                        ])
+                      })
+                    ],
+                    2
+                  )
+                : _c("div", [
+                    _c("span", [
+                      _vm._v(
+                        "This ingredient don't have any compound ingredients"
+                      )
+                    ])
+                  ])
             ],
             1
           )
@@ -43519,7 +43621,7 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("h4", [
       _vm._v("\n                2.1\n                "),
-      _c("span", { staticClass: "text-warning" }, [
+      _c("span", { staticClass: "user-input" }, [
         _vm._v("RECIPE & RAW MATERIAL")
       ])
     ])
@@ -43532,17 +43634,19 @@ var staticRenderFns = [
       _c("tr", [
         _c("th", [_vm._v("#")]),
         _vm._v(" "),
-        _c("th", { staticClass: "user-input", attrs: { width: "25%" } }, [
+        _c("th", { staticClass: "user-input", attrs: { width: "37%" } }, [
           _vm._v("Ingredient")
         ]),
         _vm._v(" "),
-        _c("th", { staticClass: "user-input", attrs: { width: "13%" } }, [
-          _vm._v(
-            "\n                        % Single Ingredient\n                    "
-          )
+        _c("th", { staticClass: "user-input", attrs: { width: "5%" } }, [
+          _vm._v("\n                            %\n                        ")
         ]),
         _vm._v(" "),
-        _c("th", [_vm._v("Compound Ingredient (if applicable)")]),
+        _c("th", { attrs: { width: "45%" } }, [
+          _vm._v(
+            "\n                            Compound Ingredient (if applicable)\n                        "
+          )
+        ]),
         _vm._v(" "),
         _c("th", { staticClass: "text-center", attrs: { width: "13%" } }, [
           _vm._v("Actions")
@@ -43556,7 +43660,7 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("h4", [
       _vm._v("\n                2.2\n                "),
-      _c("span", { staticClass: "text-warning" }, [
+      _c("span", { staticClass: "user-input" }, [
         _vm._v("RAW MATERIAL COUNTRY OF ORIGIN")
       ])
     ])
@@ -43566,13 +43670,13 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("thead", { staticClass: "thead-dark" }, [
-      _c("th", [_vm._v("Ingredient Name")]),
+      _c("th", { staticClass: "no-wrap" }, [_vm._v("Ingredient")]),
       _vm._v(" "),
-      _c("th", [_vm._v("Ingredient %")]),
+      _c("th", { staticClass: "no-wrap" }, [_vm._v("Ing. %")]),
       _vm._v(" "),
-      _c("th", [_vm._v("Overall %")]),
+      _c("th", { staticClass: "no-wrap" }, [_vm._v("Overall %")]),
       _vm._v(" "),
-      _c("th", [_vm._v("Ingredient Supplier")]),
+      _c("th", [_vm._v("Ing. Supplier")]),
       _vm._v(" "),
       _c("th", [_vm._v("Supplier Site Location Address")]),
       _vm._v(" "),
@@ -65089,8 +65193,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! E:\www\VUE\merge\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! E:\www\VUE\merge\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! /Applications/XAMPP/xamppfiles/htdocs/QaRework/resources/js/app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! /Applications/XAMPP/xamppfiles/htdocs/QaRework/resources/sass/app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
