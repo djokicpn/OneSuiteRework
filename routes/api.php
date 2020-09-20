@@ -29,6 +29,7 @@ Route::get('posts/search',      'Api\\PostController@getFilteredPosts');
 Route::get('posts/filter',      'Api\\PostController@getPosts');
 
 Route::get('ingredients/list',      'Api\\IngredientController@listAll');
+Route::post('ingredients/save',      'Api\\IngredientController@save');
 
 Route::get('ingredients/item',      function (Request $request) {
     return response()->json(IngredientResource::collection(Item::find(1)->rawIngredients));
