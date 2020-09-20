@@ -30,6 +30,7 @@ Route::get('posts/filter',      'Api\\PostController@getPosts');
 
 Route::get('ingredients/list',      'Api\\IngredientController@listAll');
 Route::post('ingredients/save',      'Api\\IngredientController@save');
+Route::post('ingredients/delete',      'Api\\IngredientController@delete');
 
 Route::get('ingredients/item',      function (Request $request) {
     return response()->json(IngredientResource::collection(Item::find(1)->rawIngredients));
@@ -47,7 +48,7 @@ Route::get('ingredients/json',      function (Request $request) {
         ['name' => 'Regular Oil', 'percentage' => 11, 'supplier' => 'David Jones'], ['name' => 'Olive Oil', 'percentage' => 25]
     ];
 
-    array_push($toRet,$ing);
+    array_push($toRet, $ing);
 
     $ing = new stdClass;
     $ing->name = 'Main Ingredient 1';
@@ -58,7 +59,7 @@ Route::get('ingredients/json',      function (Request $request) {
         ['name' => 'Baby Snacks', 'percentage' => 3]
     ];
 
-    array_push($toRet,$ing);
+    array_push($toRet, $ing);
 
 
     return response()->json($toRet, '200');

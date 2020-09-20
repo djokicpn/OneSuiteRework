@@ -2564,6 +2564,17 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
  // import { MultiSelect } from "vue-search-select";
 // import { ModelListSelect } from "vue-search-select";
@@ -2587,6 +2598,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
+      show: true,
       compoundToAdd: {
         name: "",
         perc: null
@@ -2663,6 +2675,12 @@ __webpack_require__.r(__webpack_exports__);
           _this.ingredients = response.data.data;
 
           _this.loadIngredients();
+
+          _this.addCompoundShow = false;
+          _this.compoundsToAdd = [];
+          _this.addIngredient = false;
+          _this.ingredientToAdd.name = '';
+          _this.ingredientToAdd.perc = null;
         });
       }
     },
@@ -2672,6 +2690,33 @@ __webpack_require__.r(__webpack_exports__);
     },
     deleteCmp: function deleteCmp(index) {
       this.compoundsToAdd.splice(index, 1);
+    },
+    deleteIngredient: function deleteIngredient(ing) {
+      var _this2 = this;
+
+      this.$swal({
+        icon: 'warning',
+        title: "Deleting \"".concat(ing.name, "\""),
+        text: 'Are you sure that you want do delete this ingredient?',
+        showCancelButton: true,
+        confirmButtonColor: '#e3342f',
+        cancelButotonColor: '#2cabe3',
+        confirmButtonText: 'Yes, delete it!'
+      }).then(function (result) {
+        if (result.value) {
+          axios.post('/api/ingredients/delete', {
+            id: ing.id
+          }).then(function (response) {
+            _this2.$swal({
+              icon: 'success',
+              title: 'Success!',
+              text: "\"".concat(ing.name, "\" deleted!")
+            });
+
+            _this2.loadIngredients();
+          });
+        }
+      });
     },
     addCompound: function addCompound() {
       if (!this.compoundToAdd.name.length > 1 || !this.compoundToAdd.perc > 0) {
@@ -2708,28 +2753,28 @@ __webpack_require__.r(__webpack_exports__);
       this.modalVisible = true;
     },
     loadIngredients: function loadIngredients() {
-      var _this2 = this;
-
-      axios.get("/api/ingredients/list").then(function (response) {
-        _this2.ingredients = response.data.data;
-      });
-    },
-    loadCountries: function loadCountries() {
       var _this3 = this;
 
       axios.get("/api/ingredients/list").then(function (response) {
         _this3.ingredients = response.data.data;
       });
     },
+    loadCountries: function loadCountries() {
+      var _this4 = this;
+
+      axios.get("/api/ingredients/list").then(function (response) {
+        _this4.ingredients = response.data.data;
+      });
+    },
     clickedSave: function clickedSave() {
       console.log(++this.myCounter);
     },
     searchInit: function searchInit(search) {
-      var _this4 = this;
+      var _this5 = this;
 
       axios.get("/api/categories").then(function (response) {
         var data = JSON.parse(JSON.stringify(response.data.data));
-        var options = JSON.parse(JSON.stringify(_this4.options));
+        var options = JSON.parse(JSON.stringify(_this5.options));
         console.log(data);
         console.log(options);
       });
@@ -43672,7 +43717,14 @@ var render = function() {
                       ),
                       _c(
                         "button",
-                        { staticClass: "btn btn-sm btn-danger btn-smaller" },
+                        {
+                          staticClass: "btn btn-sm btn-danger btn-smaller",
+                          on: {
+                            click: function($event) {
+                              return _vm.deleteIngredient(ingredient)
+                            }
+                          }
+                        },
                         [
                           _vm._v(
                             "\n                                Delete\n                            "
@@ -43683,233 +43735,264 @@ var render = function() {
                   ])
                 }),
                 _vm._v(" "),
-                _vm.addIngredient
-                  ? _c("tr", [
-                      _c("td", [_vm._v("#")]),
-                      _vm._v(" "),
-                      _c("td", [
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.ingredientToAdd.name,
-                              expression: "ingredientToAdd.name"
-                            }
-                          ],
-                          ref: "search",
-                          staticClass: "form-control smaller-input",
-                          attrs: { type: "text", placeholder: "Name" },
-                          domProps: { value: _vm.ingredientToAdd.name },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
+                _c("transition", { attrs: { name: "fade" } }, [
+                  _vm.addIngredient
+                    ? _c("tr", [
+                        _c("td", [_vm._v("#")]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.ingredientToAdd.name,
+                                expression: "ingredientToAdd.name"
                               }
-                              _vm.$set(
-                                _vm.ingredientToAdd,
-                                "name",
-                                $event.target.value
-                              )
-                            }
-                          }
-                        })
-                      ]),
-                      _vm._v(" "),
-                      _c("td", [
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.ingredientToAdd.perc,
-                              expression: "ingredientToAdd.perc"
-                            }
-                          ],
-                          staticClass: "form-control smaller-input",
-                          attrs: { type: "number", placeholder: "%" },
-                          domProps: { value: _vm.ingredientToAdd.perc },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
+                            ],
+                            ref: "search",
+                            staticClass: "form-control smaller-input",
+                            attrs: { type: "text", placeholder: "Name" },
+                            domProps: { value: _vm.ingredientToAdd.name },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.$set(
+                                  _vm.ingredientToAdd,
+                                  "name",
+                                  $event.target.value
+                                )
                               }
-                              _vm.$set(
-                                _vm.ingredientToAdd,
-                                "perc",
-                                $event.target.value
-                              )
                             }
-                          }
-                        })
-                      ]),
-                      _vm._v(" "),
-                      _c("td", [
-                        _vm.ingredientToAdd.name.length > 0 &&
-                        _vm.ingredientToAdd.perc > 0
-                          ? _c(
-                              "div",
-                              { staticClass: "compound-area" },
+                          })
+                        ]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.ingredientToAdd.perc,
+                                expression: "ingredientToAdd.perc"
+                              }
+                            ],
+                            staticClass: "form-control smaller-input",
+                            attrs: { type: "number", placeholder: "%" },
+                            domProps: { value: _vm.ingredientToAdd.perc },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.$set(
+                                  _vm.ingredientToAdd,
+                                  "perc",
+                                  $event.target.value
+                                )
+                              }
+                            }
+                          })
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "td",
+                          [
+                            _c(
+                              "transition",
+                              { attrs: { name: "slide-fade" } },
                               [
-                                _vm._l(_vm.compoundsToAdd, function(
-                                  cmp,
-                                  index
-                                ) {
-                                  return [
-                                    _c("span", { staticClass: "multi-wrap" }, [
-                                      _vm._v(
-                                        "\n                                        " +
-                                          _vm._s(cmp.name) +
-                                          " ( " +
-                                          _vm._s(cmp.perc) +
-                                          " % )\n                                    "
-                                      )
-                                    ]),
-                                    _vm._v(" "),
-                                    _c(
-                                      "span",
-                                      {
-                                        staticClass: "multi-wrap-danger",
-                                        on: {
-                                          click: function($event) {
-                                            return _vm.deleteCmp(index)
-                                          }
-                                        }
-                                      },
-                                      [_vm._v("Delete")]
-                                    ),
-                                    _vm._v(" "),
-                                    _c("br")
-                                  ]
-                                }),
-                                _vm._v(" "),
-                                _c(
-                                  "div",
-                                  { staticClass: "d-flex flex-nowrap m-t-5" },
-                                  [
-                                    _c("input", {
-                                      directives: [
-                                        {
-                                          name: "model",
-                                          rawName: "v-model",
-                                          value: _vm.compoundToAdd.name,
-                                          expression: "compoundToAdd.name"
-                                        }
-                                      ],
-                                      ref: "cmpAdd",
-                                      staticClass: "form-control smaller-input",
-                                      staticStyle: { "max-width": "325px" },
-                                      attrs: {
-                                        type: "text",
-                                        placeholder: "Compound Ingredient Name"
-                                      },
-                                      domProps: {
-                                        value: _vm.compoundToAdd.name
-                                      },
-                                      on: {
-                                        input: function($event) {
-                                          if ($event.target.composing) {
-                                            return
-                                          }
-                                          _vm.$set(
-                                            _vm.compoundToAdd,
-                                            "name",
-                                            $event.target.value
-                                          )
-                                        }
-                                      }
-                                    }),
-                                    _vm._v(" "),
-                                    _c("input", {
-                                      directives: [
-                                        {
-                                          name: "model",
-                                          rawName: "v-model",
-                                          value: _vm.compoundToAdd.perc,
-                                          expression: "compoundToAdd.perc"
-                                        }
-                                      ],
-                                      staticClass: "form-control smaller-input",
-                                      staticStyle: {
-                                        margin: "0px 20px 0px 20px",
-                                        "max-width": "65px"
-                                      },
-                                      attrs: {
-                                        type: "number",
-                                        placeholder: "%"
-                                      },
-                                      domProps: {
-                                        value: _vm.compoundToAdd.perc
-                                      },
-                                      on: {
-                                        keyup: function($event) {
-                                          if (
-                                            !$event.type.indexOf("key") &&
-                                            _vm._k(
-                                              $event.keyCode,
-                                              "enter",
-                                              13,
-                                              $event.key,
-                                              "Enter"
-                                            )
-                                          ) {
-                                            return null
-                                          }
-                                          $event.preventDefault()
-                                          return _vm.addCompound()
-                                        },
-                                        input: function($event) {
-                                          if ($event.target.composing) {
-                                            return
-                                          }
-                                          _vm.$set(
-                                            _vm.compoundToAdd,
-                                            "perc",
-                                            $event.target.value
-                                          )
-                                        }
-                                      }
-                                    }),
-                                    _vm._v(" "),
-                                    _c(
-                                      "button",
-                                      {
-                                        staticClass: "nowrap",
-                                        class:
-                                          _vm.addCompoundShow === true
-                                            ? "btn btn-success btn-sm"
-                                            : "btn btn-warning btn-sm",
-                                        on: { click: _vm.addCompound }
-                                      },
+                                _vm.ingredientToAdd.name.length > 0 &&
+                                _vm.ingredientToAdd.perc > 0
+                                  ? _c(
+                                      "div",
+                                      { staticClass: "compound-area" },
                                       [
-                                        _vm._v(
-                                          "\n                                        " +
-                                            _vm._s(
-                                              _vm.addCompoundShow === true
-                                                ? "Save"
-                                                : "Add"
-                                            ) +
-                                            "\n                                        Compound\n                                    "
-                                        )
-                                      ]
+                                        _vm._l(_vm.compoundsToAdd, function(
+                                          cmp,
+                                          index
+                                        ) {
+                                          return [
+                                            _c(
+                                              "span",
+                                              { staticClass: "multi-wrap" },
+                                              [
+                                                _vm._v(
+                                                  "\n                                                " +
+                                                    _vm._s(cmp.name) +
+                                                    " (\n                                                " +
+                                                    _vm._s(cmp.perc) +
+                                                    " % )\n                                            "
+                                                )
+                                              ]
+                                            ),
+                                            _vm._v(" "),
+                                            _c(
+                                              "span",
+                                              {
+                                                staticClass:
+                                                  "multi-wrap-danger",
+                                                on: {
+                                                  click: function($event) {
+                                                    return _vm.deleteCmp(index)
+                                                  }
+                                                }
+                                              },
+                                              [_vm._v("Delete")]
+                                            ),
+                                            _vm._v(" "),
+                                            _c("br")
+                                          ]
+                                        }),
+                                        _vm._v(" "),
+                                        _c(
+                                          "div",
+                                          { staticClass: "d-flex flex-nowrap" },
+                                          [
+                                            _c("input", {
+                                              directives: [
+                                                {
+                                                  name: "model",
+                                                  rawName: "v-model",
+                                                  value: _vm.compoundToAdd.name,
+                                                  expression:
+                                                    "compoundToAdd.name"
+                                                }
+                                              ],
+                                              ref: "cmpAdd",
+                                              staticClass:
+                                                "form-control smaller-input",
+                                              staticStyle: {
+                                                "max-width": "325px"
+                                              },
+                                              attrs: {
+                                                type: "text",
+                                                placeholder:
+                                                  "Compound Ingredient Name"
+                                              },
+                                              domProps: {
+                                                value: _vm.compoundToAdd.name
+                                              },
+                                              on: {
+                                                input: function($event) {
+                                                  if ($event.target.composing) {
+                                                    return
+                                                  }
+                                                  _vm.$set(
+                                                    _vm.compoundToAdd,
+                                                    "name",
+                                                    $event.target.value
+                                                  )
+                                                }
+                                              }
+                                            }),
+                                            _vm._v(" "),
+                                            _c("input", {
+                                              directives: [
+                                                {
+                                                  name: "model",
+                                                  rawName: "v-model",
+                                                  value: _vm.compoundToAdd.perc,
+                                                  expression:
+                                                    "compoundToAdd.perc"
+                                                }
+                                              ],
+                                              staticClass:
+                                                "form-control smaller-input",
+                                              staticStyle: {
+                                                margin: "0px 20px 0px 20px",
+                                                "max-width": "65px"
+                                              },
+                                              attrs: {
+                                                type: "number",
+                                                placeholder: "%"
+                                              },
+                                              domProps: {
+                                                value: _vm.compoundToAdd.perc
+                                              },
+                                              on: {
+                                                keyup: function($event) {
+                                                  if (
+                                                    !$event.type.indexOf(
+                                                      "key"
+                                                    ) &&
+                                                    _vm._k(
+                                                      $event.keyCode,
+                                                      "enter",
+                                                      13,
+                                                      $event.key,
+                                                      "Enter"
+                                                    )
+                                                  ) {
+                                                    return null
+                                                  }
+                                                  $event.preventDefault()
+                                                  return _vm.addCompound()
+                                                },
+                                                input: function($event) {
+                                                  if ($event.target.composing) {
+                                                    return
+                                                  }
+                                                  _vm.$set(
+                                                    _vm.compoundToAdd,
+                                                    "perc",
+                                                    $event.target.value
+                                                  )
+                                                }
+                                              }
+                                            }),
+                                            _vm._v(" "),
+                                            _c(
+                                              "button",
+                                              {
+                                                staticClass: "nowrap",
+                                                class:
+                                                  _vm.addCompoundShow === true
+                                                    ? "btn btn-success btn-sm"
+                                                    : "btn btn-warning btn-sm",
+                                                on: { click: _vm.addCompound }
+                                              },
+                                              [
+                                                _vm._v(
+                                                  "\n                                                " +
+                                                    _vm._s(
+                                                      _vm.addCompoundShow ===
+                                                        true
+                                                        ? "Save"
+                                                        : "Add"
+                                                    ) +
+                                                    "\n                                                Compound\n                                            "
+                                                )
+                                              ]
+                                            )
+                                          ]
+                                        ),
+                                        _vm._v(" "),
+                                        _vm.percentageError
+                                          ? _c(
+                                              "span",
+                                              { staticClass: "text-danger" },
+                                              [
+                                                _vm._v(
+                                                  "Ingredients percentage must be\n                                            exactly 100."
+                                                )
+                                              ]
+                                            )
+                                          : _vm._e()
+                                      ],
+                                      2
                                     )
-                                  ]
-                                ),
-                                _vm._v(" "),
-                                _vm.percentageError
-                                  ? _c("span", { staticClass: "text-danger" }, [
-                                      _vm._v(
-                                        "Ingredients percentage must be exactly\n                                    100."
-                                      )
-                                    ])
                                   : _vm._e()
-                              ],
-                              2
+                              ]
                             )
-                          : _vm._e()
+                          ],
+                          1
+                        )
                       ])
-                    ])
-                  : _vm._e()
+                    : _vm._e()
+                ])
               ],
               2
             )
@@ -65776,8 +65859,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /Applications/XAMPP/xamppfiles/htdocs/QaRework/resources/js/app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! /Applications/XAMPP/xamppfiles/htdocs/QaRework/resources/sass/app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! E:\www\VUE\merge\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! E:\www\VUE\merge\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

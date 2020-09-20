@@ -6,6 +6,7 @@
                     2.1
                     <span class="user-input">RECIPE & RAW MATERIAL</span>
                 </h4>
+
                 <table class="table table-borderless">
                     <thead class="thead-dark">
                         <tr>
@@ -47,97 +48,107 @@
                                 &nbsp;
                                 <button
                                     class="btn btn-sm btn-danger btn-smaller"
+                                    @click="deleteIngredient(ingredient)"
                                 >
                                     Delete
                                 </button>
                             </td>
                         </tr>
+                        <transition name="fade">
+                            <tr v-if="addIngredient">
+                                <td>#</td>
+                                <td>
+                                    <input
+                                        type="text"
+                                        class="form-control smaller-input"
+                                        placeholder="Name"
+                                        v-model="ingredientToAdd.name"
+                                        ref="search"
+                                    />
+                                </td>
 
-                        <tr v-if="addIngredient">
-                            <td>#</td>
-                            <td>
-                                <input
-                                    type="text"
-                                    class="form-control smaller-input"
-                                    placeholder="Name"
-                                    v-model="ingredientToAdd.name"
-                                    ref="search"
-                                />
-                            </td>
+                                <td>
+                                    <input
+                                        type="number"
+                                        class="form-control smaller-input"
+                                        placeholder="%"
+                                        v-model="ingredientToAdd.perc"
+                                    />
+                                </td>
 
-                            <td>
-                                <input
-                                    type="number"
-                                    class="form-control smaller-input"
-                                    placeholder="%"
-                                    v-model="ingredientToAdd.perc"
-                                />
-                            </td>
-
-                            <td>
-                                <div
-                                    class="compound-area"
-                                    v-if="
-                                        ingredientToAdd.name.length > 0 &&
-                                            ingredientToAdd.perc > 0
-                                    "
-                                >
-                                    <template
-                                        v-for="(cmp, index) in compoundsToAdd"
-                                    >
-                                        <span class="multi-wrap">
-                                            {{ cmp.name }} ( {{ cmp.perc }} % )
-                                        </span>
-                                        <span
-                                            class="multi-wrap-danger"
-                                            @click="deleteCmp(index)"
-                                            >Delete</span
-                                        >
-                                        <br />
-                                    </template>
-                                    <div class="d-flex flex-nowrap m-t-5">
-                                        <input
-                                            type="text"
-                                            class="form-control smaller-input"
-                                            placeholder="Compound Ingredient Name"
-                                            style="max-width: 325px"
-                                            v-model="compoundToAdd.name"
-                                            ref="cmpAdd"
-                                        />
-                                        <input
-                                            type="number"
-                                            class="form-control smaller-input"
-                                            placeholder="%"
-                                            style="margin: 0px 20px 0px 20px; max-width: 65px"
-                                            v-model="compoundToAdd.perc"
-                                            @keyup.enter.prevent="addCompound()"
-                                        />
-                                        <button
-                                            class="nowrap"
-                                            :class="
-                                                addCompoundShow === true
-                                                    ? 'btn btn-success btn-sm'
-                                                    : 'btn btn-warning btn-sm'
+                                <td>
+                                    <transition name="slide-fade">
+                                        <div
+                                            class="compound-area"
+                                            v-if="
+                                                ingredientToAdd.name.length >
+                                                    0 &&
+                                                    ingredientToAdd.perc > 0
                                             "
-                                            @click="addCompound"
                                         >
-                                            {{
-                                                addCompoundShow === true
-                                                    ? "Save"
-                                                    : "Add"
-                                            }}
-                                            Compound
-                                        </button>
-                                    </div>
-                                    <span
-                                        v-if="percentageError"
-                                        class="text-danger"
-                                        >Ingredients percentage must be exactly
-                                        100.</span
-                                    >
-                                </div>
-                            </td>
-                        </tr>
+                                            <template
+                                                style="margin-bottom: 5px !important"
+                                                v-for="(cmp,
+                                                index) in compoundsToAdd"
+                                            >
+                                                <span class="multi-wrap">
+                                                    {{ cmp.name }} (
+                                                    {{ cmp.perc }} % )
+                                                </span>
+                                                <span
+                                                    class="multi-wrap-danger"
+                                                    @click="deleteCmp(index)"
+                                                    >Delete</span
+                                                >
+                                                <br />
+                                            </template>
+                                            <div class="d-flex flex-nowrap">
+                                                <input
+                                                    type="text"
+                                                    class="form-control smaller-input"
+                                                    placeholder="Compound Ingredient Name"
+                                                    style="max-width: 325px"
+                                                    v-model="compoundToAdd.name"
+                                                    ref="cmpAdd"
+                                                />
+                                                <input
+                                                    type="number"
+                                                    class="form-control smaller-input"
+                                                    placeholder="%"
+                                                    style="margin: 0px 20px 0px 20px; max-width: 65px"
+                                                    v-model="compoundToAdd.perc"
+                                                    @keyup.enter.prevent="
+                                                        addCompound()
+                                                    "
+                                                />
+                                                <button
+                                                    class="nowrap"
+                                                    :class="
+                                                        addCompoundShow === true
+                                                            ? 'btn btn-success btn-sm'
+                                                            : 'btn btn-warning btn-sm'
+                                                    "
+                                                    @click="addCompound"
+                                                >
+                                                    {{
+                                                        addCompoundShow === true
+                                                            ? "Save"
+                                                            : "Add"
+                                                    }}
+                                                    Compound
+                                                </button>
+                                            </div>
+                                            <span
+                                                v-if="percentageError"
+                                                class="text-danger"
+                                                >Ingredients percentage must be
+                                                exactly 100.</span
+                                            >
+                                        </div>
+                                    </transition>
+                                </td>
+                            </tr>
+                        </transition>
                     </tbody>
                 </table>
                 <button
@@ -346,6 +357,7 @@ export default {
     },
     data() {
         return {
+            show: true,
             compoundToAdd: {
                 name: "",
                 perc: null
@@ -390,6 +402,7 @@ export default {
     methods: {
         addIngredientSubmit() {
             if(!this.addIngredient) {
+
                 this.addIngredient = true;
                 this.$nextTick(function() {
                     this.$refs.search.focus();
@@ -402,6 +415,11 @@ export default {
                  axios.post("/api/ingredients/save", {data: data}).then(response => {
                     this.ingredients = response.data.data;
                     this.loadIngredients();
+                    this.addCompoundShow = false;
+                    this.compoundsToAdd = [];
+                    this.addIngredient = false;
+                    this.ingredientToAdd.name = '';
+                    this.ingredientToAdd.perc = null;
                 });
             }
 
@@ -413,6 +431,28 @@ export default {
         },
         deleteCmp(index) {
             this.compoundsToAdd.splice(index, 1);
+        },
+        deleteIngredient(ing) {
+            this.$swal({
+                icon: 'warning',
+                title:`Deleting "${ing.name}"`,
+                text: 'Are you sure that you want do delete this ingredient?',
+                showCancelButton: true,
+                confirmButtonColor: '#e3342f',
+                cancelButotonColor: '#2cabe3',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result)=> {
+                if(result.value) {
+                    axios.post('/api/ingredients/delete', {id : ing.id}).then((response) => {
+                        this.$swal({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: `"${ing.name}" deleted!`
+                    })
+                    this.loadIngredients();
+                    });
+                }
+            });
         },
         addCompound() {
             if (!this.compoundToAdd.name.length > 1 || !this.compoundToAdd.perc > 0) {

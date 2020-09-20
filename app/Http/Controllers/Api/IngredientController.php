@@ -48,4 +48,11 @@ class IngredientController extends Controller
 
         return response()->json('Done!', 200);
     }
+    public function delete(Request $request) {
+        $item = Item::find(1);
+        $ing = NotAllowedIngredientSingle::find(request()->id);
+        $ing->compounds()->detach();
+        $item->rawIngredients()->detach($ing);
+        return response()->json(request()->id, 200);
+    }
 }
