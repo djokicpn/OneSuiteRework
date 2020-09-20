@@ -11175,6 +11175,30 @@ body {
   color: #42b983;
 }
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* this is for Firefox */
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.nowrap {
+  white-space: nowrap !important;
+}
+
+.main-ingredient {
+  background-color: #0f2e41 !important;
+}
+
+.p-l-5 {
+  padding-left: 2em !important;
+}
+
 .m-y-2 {
   margin-top: 2px !important;
   margin-bottom: 2px !important;
@@ -11195,6 +11219,7 @@ table td {
 
 .table td,
 .table th {
+  padding: 0.15rem;
   vertical-align: top;
   border-top: 1px solid #dee2e6;
 }
@@ -11246,6 +11271,17 @@ body {
   padding-right: 5px;
   padding-left: 5px;
   margin-left: 2.5px;
+}
+
+.multi-wrap-danger {
+  border-radius: 3px !important;
+  padding: 1px;
+  background-color: #e3342f !important;
+  color: #fff !important;
+  padding-right: 5px;
+  padding-left: 5px;
+  margin-left: 2.5px;
+  cursor: pointer !important;
 }
 
 .ui.multiple.dropdown > .label {

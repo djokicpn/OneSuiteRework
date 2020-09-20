@@ -8,53 +8,100 @@
                 </h4>
                 <table class="table table-borderless">
                     <thead class="thead-dark">
-                        <tr>
-                            <th>#</th>
-                            <th width="37%" class="user-input">Ingredient</th>
-                            <th width="5%" class="user-input">
-                                %
-                            </th>
-                            <th width="45%">
-                                Compound Ingredient (if applicable)
-                            </th>
-                            <th width="13%" class="text-center">Actions</th>
-                        </tr>
+                    <tr>
+                        <th>#</th>
+                        <th width="37%" class="user-input">Ingredient</th>
+                        <th width="5%" class="user-input">
+                            %
+                        </th>
+                        <th width="45%">
+                            Compound Ingredient (if applicable)
+                        </th>
+                        <th width="13%" class="text-center">Actions</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        <tr
-                            v-for="(ingredient, index) in ingredients"
-                            :key="ingredient.id"
-                        >
-                            <th scope="row">{{ index + 1 }}</th>
-                            <td>{{ ingredient.name }}</td>
-                            <td>{{ ingredient.perc }} %</td>
-                            <td>
+                    <tr
+                        v-for="(ingredient, index) in ingredients"
+                        :key="ingredient.id"
+                    >
+                        <th scope="row">{{ index + 1 }}</th>
+                        <td>{{ ingredient.name }}</td>
+                        <td>{{ ingredient.perc }} %</td>
+                        <td>
                                 <span
                                     class="multi-wrap"
                                     v-for="compound in ingredient.compound"
                                     :key="compound.id"
-                                    >{{ compound.name }} (
+                                >{{ compound.name }} (
                                     {{ compound.compound_perc }}% )</span
                                 >
-                            </td>
-                            <td class="text-right">
-                                <button
-                                    class="btn btn-sm btn-primary btn-smaller"
-                                    @click="showModal(ingredient)"
-                                >
-                                    Edit
-                                </button>
-                                &nbsp;
-                                <button
-                                    class="btn btn-sm btn-danger btn-smaller"
-                                >
-                                    Delete
-                                </button>
-                            </td>
-                        </tr>
+                        </td>
+                        <td class="text-right">
+                            <button
+                                class="btn btn-sm btn-primary btn-smaller"
+                                @click="showModal(ingredient)"
+                            >
+                                Edit
+                            </button>
+                            &nbsp;
+                            <button
+                                class="btn btn-sm btn-danger btn-smaller"
+                            >
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+
+                    <tr v-if="addIngredient">
+                        <td>#</td>
+                        <td><input type="text" class="form-control smaller-input" placeholder="Name"
+                                   v-model="ingredientToAdd.name"></td>
+                        <td><input type="number" class="form-control smaller-input" placeholder="%"
+                                   v-model="ingredientToAdd.perc"></td>
+                        <td>
+
+
+                            <div class="compound-area"
+                                 v-if="ingredientToAdd.name.length > 0 && ingredientToAdd.perc > 0">
+                                <template v-for="(cmp,index) in compoundsToAdd">
+                                    <span class="multi-wrap">
+                                        {{ cmp.name }} ( {{ cmp.perc }} % )
+                                    </span>
+                                    <span class="multi-wrap-danger" @click="deleteCmp(index)">Delete</span>
+                                    <br/>
+                                </template>
+                                <div class="d-flex flex-nowrap">
+                                    <input type="text"
+                                           class="form-control smaller-input"
+                                           placeholder="Compound Ingredient Name"
+                                           style="max-width: 325px"
+                                           v-model="compoundToAdd.name"
+                                           ref="cmpAdd"
+                                    >
+                                    <input type="number"
+                                           class="form-control smaller-input"
+                                           placeholder="%"
+                                           style="margin: 0px 20px 0px 20px; max-width: 65px"
+                                           v-model="compoundToAdd.perc"
+                                           @keyup.enter.prevent="addCompound()"
+                                    >
+                                    <button class="nowrap"
+                                            :class="addCompoundShow === true ? 'btn btn-success btn-sm' : 'btn btn-warning btn-sm'"
+                                            @click="addCompound">
+                                        {{ addCompoundShow === true ? 'Save' : 'Add' }} Compound
+                                    </button>
+                                </div>
+                                <span v-if="percentageError" class="text-danger">Ingredients percentage must be exactly 100.</span>
+                            </div>
+                        </td>
+                    </tr>
                     </tbody>
                 </table>
-                <button class="btn btn-warning">Add Ingredient</button>
+                <button :class="addIngredient === true ? 'btn btn-success' : 'btn btn-warning'"
+                        @click="addIngredient === true? addIngredient = false : addIngredient = true">
+                    {{ addIngredient === true ? 'Save' : 'Add' }} Ingredient
+                </button>
             </div>
         </div>
 
@@ -64,41 +111,42 @@
                 <h4>
                     2.2
                     <span class="user-input"
-                        >RAW MATERIAL COUNTRY OF ORIGIN</span
+                    >RAW MATERIAL COUNTRY OF ORIGIN</span
                     >
                 </h4>
                 <table class="table table-borderless">
                     <thead class="thead-dark">
-                        <th class="no-wrap">Ingredient</th>
-                        <th class="no-wrap">Ing. %</th>
-                        <th class="no-wrap">Overall %</th>
-                        <th>Ing. Supplier</th>
-                        <th>Supplier Site Location Address</th>
-                        <th>Country of Origin</th>
-                        <th>Country Where Processed (if different)</th>
+                    <th class="no-wrap">Ingredient</th>
+                    <th class="no-wrap">Ing. %</th>
+                    <th class="no-wrap">Overall %</th>
+                    <th>Ing. Supplier</th>
+                    <th>Supplier Site Location Address</th>
+                    <th>Country of Origin</th>
+                    <th>Country Where Processed (if different)</th>
                     </thead>
                     <tbody>
-                        <tr
-                            v-for="(ingredient, index) in ingredients"
-                            :key="ingredient.id"
-                        >
+                    <template
+                        v-for="(ingredient, index) in ingredients">
+                        <tr class="main-ingredient ">
                             <td class="no-wrap">
                                 {{ index + 1 + ". " + ingredient.name }}
                             </td>
-                            <td>{{ ingredient.perc }}</td>
+                            <td>{{ ingredient.perc }} %</td>
                             <td>{{ ingredient.percentage }}</td>
                             <td>
                                 <input
                                     type="text"
                                     class="form-control"
                                     :value="ingredient.supplier"
+                                    placeholder="Supplier name"
                                 />
                             </td>
                             <td>
                                 <input
                                     type="text"
                                     class="form-control"
-                                    :value="ingredient.supplier_location"
+                                    :value="ingredient.location"
+                                    placeholder="Location"
                                 />
                             </td>
                             <td>
@@ -114,7 +162,8 @@
                                                 : ''
                                         "
                                     >
-                                        {{ country.name }}</option
+                                        {{ country.name }}
+                                    </option
                                     >
                                 </select>
                             </td>
@@ -124,6 +173,51 @@
                                 </select>
                             </td>
                         </tr>
+                        <tr v-for="(compound, compound_index) in ingredient.compound" :key="compound.id">
+                            <td class="no-wrap p-l-5">
+                                {{ index + 1 + "." + (compound_index + 1) + " " + compound.name }}
+                            </td>
+                            <td>{{ compound.perc }}</td>
+                            <td>{{ compound.compound_perc }} %</td>
+                            <td>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    :value="compound.supplier"
+                                    placeholder="Supplier name"
+                                />
+                            </td>
+                            <td>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    :value="compound.location"
+                                    placeholder="Location"
+                                />
+                            </td>
+                            <td>
+                                <select name="" class="form-control">
+                                    <option value="999">Please select</option>
+                                    <option
+                                        v-for="country in countries"
+                                        :value="country.id"
+                                        :key="country.id"
+                                        v-bind:selected="
+                                            country.id === 1 && country.id
+                                                ? 'selected'
+                                                : ''
+                                        ">
+                                        {{ country.name }}
+                                    </option>
+                                </select>
+                            </td>
+                            <td>
+                                <select name="" class="form-control">
+                                    <option value="999">Please select</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </template>
                     </tbody>
                 </table>
             </div>
@@ -145,15 +239,15 @@
             >
             </model-select>
             <span>Editing Ingredient: {{ selectedIngredient.name }}</span>
-            <br /><br />
-            <div v-if="selectedIngredient.compound.length > 0"> <span>Compounds:</span>
-            <br /><br />
-            <p
-                v-for="compound in selectedIngredient.compound"
-                :key="compound.id"
-            >
-                {{ compound.name }}
-            </p>
+            <br/><br/>
+            <div v-if="selectedIngredient.compound.length > 0"><span>Compounds:</span>
+                <br/><br/>
+                <p
+                    v-for="compound in selectedIngredient.compound"
+                    :key="compound.id"
+                >
+                    {{ compound.name }}
+                </p>
             </div>
             <div v-else>
                 <span>This ingredient don't have any compound ingredients</span>
@@ -166,7 +260,7 @@ import Modal from "../components/Modal";
 import _ from "lodash";
 // import { MultiSelect } from "vue-search-select";
 // import { ModelListSelect } from "vue-search-select";
-import { ModelSelect } from "vue-search-select";
+import {ModelSelect} from "vue-search-select";
 
 export default {
     name: "RecipeRaw",
@@ -177,27 +271,39 @@ export default {
         ModelSelect
     },
     watch: {
-        item: function(item) {
+        item: function (item) {
             console.log(item);
         },
-        selectedIngredient: function(ing) {
+        selectedIngredient: function (ing) {
             console.log(ing);
         }
     },
     data() {
         return {
+            compoundToAdd: {
+                name: "",
+                perc: null
+            },
+            compoundsToAdd: [],
+            ingredientToAdd: {
+                name: "",
+                perc: "",
+            },
+            addIngredient: false,
+            addCompoundShow: false,
+            percentageError: false,
             selectedIngredient: {},
             countries: [
-                { id: 1, name: "USA" },
-                { id: 2, name: "CAD" },
-                { id: 3, name: "SRB" }
+                {id: 1, name: "USA"},
+                {id: 2, name: "CAD"},
+                {id: 3, name: "SRB"}
             ],
             options: [
-                { value: "1", text: "aa" + " - " + "1" },
-                { value: "2", text: "ab" + " - " + "2" },
-                { value: "3", text: "bc" + " - " + "3" },
-                { value: "4", text: "cd" + " - " + "4" },
-                { value: "5", text: "de" + " - " + "5" }
+                {value: "1", text: "aa" + " - " + "1"},
+                {value: "2", text: "ab" + " - " + "2"},
+                {value: "3", text: "bc" + " - " + "3"},
+                {value: "4", text: "cd" + " - " + "4"},
+                {value: "5", text: "de" + " - " + "5"}
             ],
             item: {
                 value: "",
@@ -213,17 +319,55 @@ export default {
         };
     },
     mounted() {
-        this.renderTable();
+        this.loadIngredients();
     },
     methods: {
+        focusInput: function (inputRef) {
+            // $refs is an object that holds the DOM references to your inputs
+            this.$refs.[inputRef][0].focus();
+        },
+        deleteCmp(index) {
+            this.compoundsToAdd.splice(index, 1);
+        },
+        addCompound() {
+            if (!this.compoundToAdd.name.length > 1 || !this.compoundToAdd.perc > 0) {
+                return
+            }
+            if ((this.compoundPercentageSum() + parseInt(this.compoundToAdd.perc)) > 100 || this.compoundToAdd.perc > 100) {
+                this.percentageError = true;
+                return
+            } else {
+                this.percentageError = false;
+            }
+            this.addCompoundShow === true ? this.addCompoundShow = false : this.addCompoundShow = true;
+            this.compoundsToAdd.push(this.compoundToAdd);
+            this.compoundToAdd = {};
+            this.$refs.cmpAdd.focus();
+
+
+        },
+        compoundPercentageSum() {
+            let sum = 0;
+            if (this.compoundsToAdd.length > 0) {
+                this.compoundsToAdd.forEach(e => {
+                    sum += parseInt(e.perc);
+                })
+                return sum;
+            }
+            return 0;
+        },
         showModal(ingredient) {
             this.selectedIngredient = ingredient;
             console.log(ingredient);
             this.modalVisible = true;
         },
-        renderTable() {
+        loadIngredients() {
             axios.get("/api/ingredients/list").then(response => {
-                console.log(response.data);
+                this.ingredients = response.data.data;
+            });
+        },
+        loadCountries() {
+            axios.get("/api/ingredients/list").then(response => {
                 this.ingredients = response.data.data;
             });
         },

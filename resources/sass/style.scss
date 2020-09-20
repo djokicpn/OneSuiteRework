@@ -1,85 +1,129 @@
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* this is for Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+.nowrap {
+    white-space: nowrap !important;
+}
+
+.main-ingredient {
+    background-color: #0f2e41 !important;
+}
+
+.p-l-5 {
+    padding-left: 2em !important;
+}
 
 // .btn-smaller {
 //   padding: 0.05rem 0.05rem !important;
 // }
 
 .m-y-2 {
-  margin-top: 2px !important;
-  margin-bottom: 2px !important;
+    margin-top: 2px !important;
+    margin-bottom: 2px !important;
 }
+
 table {
-  text-align: left !important;
-  padding: 0.15rem !important;
-  th {
     text-align: left !important;
-  }
-  td {
-    text-align: left !important;
-  }
+    padding: 0.15rem !important;
+
+    th {
+        text-align: left !important;
+    }
+
+    td {
+        text-align: left !important;
+    }
 }
+
 .table td,
 .table th {
-  // padding: 0.15rem;
-  vertical-align: top;
-  border-top: 1px solid #dee2e6;
+    padding: 0.15rem;
+    vertical-align: top;
+    border-top: 1px solid #dee2e6;
 }
+
 .qa-left-nav {
-  li {
-    padding-bottom: 0.35rem;
-    padding-top: 0.35rem;
-    padding-left: 1rem;
-  }
+    li {
+        padding-bottom: 0.35rem;
+        padding-top: 0.35rem;
+        padding-left: 1rem;
+    }
 }
+
 .smaller-input {
-  height: calc(0.8em + 1rem + 2px) !important;
+    height: calc(0.8em + 1rem + 2px) !important;
 }
 
 html {
-  min-height: 100%; /* make sure it is at least as tall as the viewport */
-  position: relative;
+    min-height: 100%; /* make sure it is at least as tall as the viewport */
+    position: relative;
 }
+
 body {
-  height: 100%; /* force the BODY element to match the height of the HTML element */
+    height: 100%; /* force the BODY element to match the height of the HTML element */
 }
+
 .modal-mask {
-  position: fixed;
-  z-index: 9998;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: table;
-  transition: opacity 0.3s ease;
+    position: fixed;
+    z-index: 9998;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: table;
+    transition: opacity 0.3s ease;
 }
 
 .modal-wrapper {
-  display: table-cell;
-  vertical-align: middle;
-  transition: all 0.2;
+    display: table-cell;
+    vertical-align: middle;
+    transition: all 0.2;
 }
 
 .multi-wrap {
-  border-radius: 3px !important;
-  padding: 1px;
-  background-color: #2cabe3 !important;
-  color: rgb(28, 30, 37) !important;
-  padding-right: 5px;
-  padding-left: 5px;
-  margin-left: 2.5px;
+    border-radius: 3px !important;
+    padding: 1px;
+    background-color: #2cabe3 !important;
+    color: rgb(28, 30, 37) !important;
+    padding-right: 5px;
+    padding-left: 5px;
+    margin-left: 2.5px;
 }
+.multi-wrap-danger {
+    border-radius: 3px !important;
+    padding: 1px;
+    background-color: #e3342f !important;
+    color: #fff !important;
+    padding-right: 5px;
+    padding-left: 5px;
+    margin-left: 2.5px;
+    cursor: pointer !important;
+}
+
 .ui.multiple.dropdown > .label {
-  background-color: #2cabe3 !important;
-  color: #12445b !important;
+    background-color: #2cabe3 !important;
+    color: #12445b !important;
 }
+
 .ui.dropdown .menu > .item {
-  padding: 0.6rem 0.6rem !important;
+    padding: 0.6rem 0.6rem !important;
 }
+
 tbody:nth-child(1) {
-  margin-top: 10px !important;
+    margin-top: 10px !important;
 }
+
 .m-b-30 {
-  margin-bottom: 30px !important;
+    margin-bottom: 30px !important;
 }
 
 
