@@ -2498,6 +2498,72 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
  // import { MultiSelect } from "vue-search-select";
 // import { ModelListSelect } from "vue-search-select";
@@ -2578,6 +2644,28 @@ __webpack_require__.r(__webpack_exports__);
     this.loadIngredients();
   },
   methods: {
+    addIngredientSubmit: function addIngredientSubmit() {
+      var _this = this;
+
+      if (!this.addIngredient) {
+        this.addIngredient = true;
+        this.$nextTick(function () {
+          this.$refs.search.focus();
+        });
+      } else {
+        var data = {
+          ingredient: this.ingredientToAdd,
+          compounds: this.compoundsToAdd
+        };
+        axios.post("/api/ingredients/save", {
+          data: data
+        }).then(function (response) {
+          _this.ingredients = response.data.data;
+
+          _this.loadIngredients();
+        });
+      }
+    },
     focusInput: function focusInput(inputRef) {
       // $refs is an object that holds the DOM references to your inputs
       this.$refs[inputRef][0].focus();
@@ -2620,28 +2708,28 @@ __webpack_require__.r(__webpack_exports__);
       this.modalVisible = true;
     },
     loadIngredients: function loadIngredients() {
-      var _this = this;
-
-      axios.get("/api/ingredients/list").then(function (response) {
-        _this.ingredients = response.data.data;
-      });
-    },
-    loadCountries: function loadCountries() {
       var _this2 = this;
 
       axios.get("/api/ingredients/list").then(function (response) {
         _this2.ingredients = response.data.data;
       });
     },
+    loadCountries: function loadCountries() {
+      var _this3 = this;
+
+      axios.get("/api/ingredients/list").then(function (response) {
+        _this3.ingredients = response.data.data;
+      });
+    },
     clickedSave: function clickedSave() {
       console.log(++this.myCounter);
     },
     searchInit: function searchInit(search) {
-      var _this3 = this;
+      var _this4 = this;
 
       axios.get("/api/categories").then(function (response) {
         var data = JSON.parse(JSON.stringify(response.data.data));
-        var options = JSON.parse(JSON.stringify(_this3.options));
+        var options = JSON.parse(JSON.stringify(_this4.options));
         console.log(data);
         console.log(options);
       });
@@ -43575,19 +43663,19 @@ var render = function() {
                         },
                         [
                           _vm._v(
-                            "\n                            Edit\n                        "
+                            "\n                                Edit\n                            "
                           )
                         ]
                       ),
                       _vm._v(
-                        "\n                         \n                        "
+                        "\n                             \n                            "
                       ),
                       _c(
                         "button",
                         { staticClass: "btn btn-sm btn-danger btn-smaller" },
                         [
                           _vm._v(
-                            "\n                            Delete\n                        "
+                            "\n                                Delete\n                            "
                           )
                         ]
                       )
@@ -43609,6 +43697,7 @@ var render = function() {
                               expression: "ingredientToAdd.name"
                             }
                           ],
+                          ref: "search",
                           staticClass: "form-control smaller-input",
                           attrs: { type: "text", placeholder: "Name" },
                           domProps: { value: _vm.ingredientToAdd.name },
@@ -43669,11 +43758,11 @@ var render = function() {
                                   return [
                                     _c("span", { staticClass: "multi-wrap" }, [
                                       _vm._v(
-                                        "\n                                    " +
+                                        "\n                                        " +
                                           _vm._s(cmp.name) +
                                           " ( " +
                                           _vm._s(cmp.perc) +
-                                          " % )\n                                "
+                                          " % )\n                                    "
                                       )
                                     ]),
                                     _vm._v(" "),
@@ -43696,7 +43785,7 @@ var render = function() {
                                 _vm._v(" "),
                                 _c(
                                   "div",
-                                  { staticClass: "d-flex flex-nowrap" },
+                                  { staticClass: "d-flex flex-nowrap m-t-5" },
                                   [
                                     _c("input", {
                                       directives: [
@@ -43794,13 +43883,13 @@ var render = function() {
                                       },
                                       [
                                         _vm._v(
-                                          "\n                                    " +
+                                          "\n                                        " +
                                             _vm._s(
                                               _vm.addCompoundShow === true
                                                 ? "Save"
                                                 : "Add"
                                             ) +
-                                            " Compound\n                                "
+                                            "\n                                        Compound\n                                    "
                                         )
                                       ]
                                     )
@@ -43810,7 +43899,7 @@ var render = function() {
                                 _vm.percentageError
                                   ? _c("span", { staticClass: "text-danger" }, [
                                       _vm._v(
-                                        "Ingredients percentage must be exactly 100."
+                                        "Ingredients percentage must be exactly\n                                    100."
                                       )
                                     ])
                                   : _vm._e()
@@ -43830,16 +43919,10 @@ var render = function() {
             "button",
             {
               class:
-                _vm.addIngredient === true
+                this.addIngredient === true
                   ? "btn btn-success"
                   : "btn btn-warning",
-              on: {
-                click: function($event) {
-                  _vm.addIngredient === true
-                    ? (_vm.addIngredient = false)
-                    : (_vm.addIngredient = true)
-                }
-              }
+              on: { click: _vm.addIngredientSubmit }
             },
             [
               _vm._v(
@@ -43867,9 +43950,9 @@ var render = function() {
                     _c("tr", { staticClass: "main-ingredient " }, [
                       _c("td", { staticClass: "no-wrap" }, [
                         _vm._v(
-                          "\n                            " +
+                          "\n                                " +
                             _vm._s(index + 1 + ". " + ingredient.name) +
-                            "\n                        "
+                            "\n                            "
                         )
                       ]),
                       _vm._v(" "),
@@ -43917,9 +44000,9 @@ var render = function() {
                                 },
                                 [
                                   _vm._v(
-                                    "\n                                    " +
+                                    "\n                                        " +
                                       _vm._s(country.name) +
-                                      "\n                                "
+                                      "\n                                    "
                                   )
                                 ]
                               )
@@ -43939,7 +44022,7 @@ var render = function() {
                       return _c("tr", { key: compound.id }, [
                         _c("td", { staticClass: "no-wrap p-l-5" }, [
                           _vm._v(
-                            "\n                            " +
+                            "\n                                " +
                               _vm._s(
                                 index +
                                   1 +
@@ -43948,7 +44031,7 @@ var render = function() {
                                   " " +
                                   compound.name
                               ) +
-                              "\n                        "
+                              "\n                            "
                           )
                         ]),
                         _vm._v(" "),
@@ -44004,9 +44087,9 @@ var render = function() {
                                   },
                                   [
                                     _vm._v(
-                                      "\n                                    " +
+                                      "\n                                        " +
                                         _vm._s(country.name) +
-                                        "\n                                "
+                                        "\n                                    "
                                     )
                                   ]
                                 )
@@ -44129,12 +44212,12 @@ var staticRenderFns = [
         ]),
         _vm._v(" "),
         _c("th", { staticClass: "user-input", attrs: { width: "5%" } }, [
-          _vm._v("\n                        %\n                    ")
+          _vm._v("\n                            %\n                        ")
         ]),
         _vm._v(" "),
         _c("th", { attrs: { width: "45%" } }, [
           _vm._v(
-            "\n                        Compound Ingredient (if applicable)\n                    "
+            "\n                            Compound Ingredient (if applicable)\n                        "
           )
         ]),
         _vm._v(" "),
@@ -65693,8 +65776,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! E:\www\VUE\merge\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! E:\www\VUE\merge\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! /Applications/XAMPP/xamppfiles/htdocs/QaRework/resources/js/app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! /Applications/XAMPP/xamppfiles/htdocs/QaRework/resources/sass/app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

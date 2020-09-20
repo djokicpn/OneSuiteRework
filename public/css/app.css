@@ -11301,6 +11301,10 @@ tbody:nth-child(1) {
   margin-bottom: 30px !important;
 }
 
+.m-t-5 {
+  margin-top: 5px !important;
+}
+
 .no-wrap {
   white-space: nowrap !important;
 }
