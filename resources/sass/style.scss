@@ -73,6 +73,9 @@ html {
 body {
     height: 100%; /* force the BODY element to match the height of the HTML element */
 }
+.dim2 {
+    opacity: 0.8 !important;
+  }
 
 .modal-mask {
     position: fixed;

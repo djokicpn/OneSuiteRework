@@ -92,7 +92,5 @@ export default {
 };
 </script>
 <style lang="scss">
-.dim2 {
-  opacity: 80% !important;
-}
+
 </style>
