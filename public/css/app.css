@@ -10904,6 +10904,10 @@ a.text-dark:focus {
   }
 }
 
+.main-ingredient {
+  background-color: #b0b1b3 !important;
+}
+
 .box-nav-left {
   min-height: 100%;
 }
@@ -10974,6 +10978,10 @@ body {
 [data-theme=dark] {
   background-color: #343a40 !important;
   color: #f8fafc;
+}
+
+[data-theme=dark] .main-ingredient {
+  background-color: #0f2e41 !important;
 }
 
 [data-theme=dark] .swal2-success-fix {
@@ -11223,10 +11231,6 @@ input[type=number] {
   white-space: nowrap !important;
 }
 
-.main-ingredient {
-  background-color: #0f2e41 !important;
-}
-
 .p-l-5 {
   padding-left: 2em !important;
 }
@@ -11292,7 +11296,7 @@ body {
 .modal-wrapper {
   display: table-cell;
   vertical-align: middle;
-  transition: all 0.2;
+  transition-duration: all 0.2;
 }
 
 .multi-wrap {

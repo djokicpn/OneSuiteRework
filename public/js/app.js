@@ -2608,6 +2608,25 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
  // import { MultiSelect } from "vue-search-select";
 // import { ModelListSelect } from "vue-search-select";
@@ -2631,6 +2650,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
+      loadingIngredients: true,
       show: true,
       compoundToAdd: {
         name: "",
@@ -2692,6 +2712,11 @@ __webpack_require__.r(__webpack_exports__);
     addIngredientSubmit: function addIngredientSubmit() {
       var _this = this;
 
+      if (this.addIngredient === true) if (this.ingredientToAdd.name.length === 0 || this.ingredientToAdd.perc.length === 0) {
+        this.$toast.warning("Both name and percentage are mandatory!");
+        return;
+      }
+
       if (!this.addIngredient) {
         this.addIngredient = true;
         this.$nextTick(function () {
@@ -2702,9 +2727,12 @@ __webpack_require__.r(__webpack_exports__);
           ingredient: this.ingredientToAdd,
           compounds: this.compoundsToAdd
         };
+        this.loadingIngredients = true;
         axios.post("/api/ingredients/save", {
           data: data
         }).then(function (response) {
+          _this.$toast.open("".concat(_this.ingredientToAdd.name, " ingredient successfuly added!"));
+
           _this.ingredients = response.data.data;
 
           _this.loadIngredients();
@@ -2737,10 +2765,11 @@ __webpack_require__.r(__webpack_exports__);
         confirmButtonText: 'Yes, delete it!'
       }).then(function (result) {
         if (result.value) {
+          _this2.loadingIngredients = true;
           axios.post('/api/ingredients/delete', {
             id: ing.id
           }).then(function (response) {
-            _this2.$toast.open('Ingredient deleted!');
+            _this2.$toast.open("".concat(ing.name, " successfuly deleted!"));
 
             _this2.loadIngredients();
           });
@@ -2754,6 +2783,7 @@ __webpack_require__.r(__webpack_exports__);
 
       this.addCompoundShow === !this.addCompoundShow;
       this.compoundsToAdd.push(this.compoundToAdd);
+      this.$toast.open("".concat(this.compoundToAdd.name, " added to ").concat(this.ingredientToAdd.name, " as compound (").concat(this.compoundToAdd.perc, " %)"));
       this.compoundToAdd = {};
       this.$refs.cmpAdd.focus();
     },
@@ -2791,6 +2821,7 @@ __webpack_require__.r(__webpack_exports__);
 
       axios.get("/api/ingredients/list").then(function (response) {
         _this3.ingredients = response.data.data;
+        _this3.loadingIngredients = false;
       });
     },
     loadCountries: function loadCountries() {
@@ -2824,6 +2855,12 @@ __webpack_require__.r(__webpack_exports__);
     // select option from parent component
     selectFromParentComponent: function selectFromParentComponent() {
       this.items = lodash__WEBPACK_IMPORTED_MODULE_1___default.a.unionWith(this.items, [this.options[0]], lodash__WEBPACK_IMPORTED_MODULE_1___default.a.isEqual);
+    },
+    validatePage: function validatePage(e) {
+      if (this.ingredientPercentageSum() !== 100) {
+        e.preventDefault();
+        return;
+      }
     }
   }
 });
@@ -43527,81 +43564,96 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
+  return _c("div", [
+    _c("div", { staticClass: "box " }, [
+      _c("div", { staticClass: "col-md-12 text-left" }, [
+        _vm._m(0),
+        _vm._v(" "),
+        _vm._m(1),
+        _vm._v(" "),
+        _c(
+          "div",
+          { staticClass: "col-md-12 text-right" },
+          [
+            _c("router-link", { attrs: { to: { name: "qa-recipe-raw" } } }, [
+              _c("button", { staticClass: "btn btn-success pull-right" }, [
+                _vm._v("\n                        Next\n                    ")
+              ])
+            ])
+          ],
+          1
+        )
+      ])
+    ])
+  ])
 }
 var staticRenderFns = [
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", [
-      _c("div", { staticClass: "box " }, [
-        _c("div", { staticClass: "col-md-12 text-left" }, [
-          _c("h4", [
-            _vm._v("\n                1.\n                "),
-            _c("span", { staticClass: "text-warning" }, [
-              _vm._v("GENERAL INFORMATION")
-            ])
-          ]),
-          _vm._v(" "),
-          _c("table", { staticClass: "table table-striped text-left" }, [
-            _c("thead", { staticClass: "thead-dark" }, [
-              _c("th", { attrs: { scope: "col" } }, [
-                _vm._v(
-                  "\n                    DOCUMENT CHECK LIST TO COMPLETE THIS SPECIFICATION\n                "
-                )
-              ])
-            ]),
-            _vm._v(" "),
-            _c("tbody", [
-              _c("tr", [
-                _c("td", { staticClass: "dim2 font-sm" }, [
-                  _vm._v("Food Safety Certificates &")
-                ])
-              ]),
-              _vm._v(" "),
-              _c("tr", [
-                _c("td", { staticClass: "dim2 font-sm" }, [
-                  _vm._v(
-                    "\n                        Nutritional test reports - Certificate of Analysis\n                    "
-                  )
-                ])
-              ]),
-              _vm._v(" "),
-              _c("tr", [
-                _c("td", { staticClass: "dim2 font-sm" }, [
-                  _vm._v(
-                    "\n                        Product Manufacturing flow chart\n                    "
-                  )
-                ])
-              ]),
-              _vm._v(" "),
-              _c("tr", [
-                _c("td", { staticClass: "dim2 font-sm" }, [
-                  _vm._v("HACCPP Plan")
-                ])
-              ]),
-              _vm._v(" "),
-              _c("tr", [
-                _c("td", { staticClass: "dim2 font-sm" }, [
-                  _vm._v("Allergen Mangement Plan")
-                ])
-              ]),
-              _vm._v(" "),
-              _c("tr", [
-                _c("td", { staticClass: "dim2 font-sm" }, [
-                  _vm._v(
-                    "\n                        Relevant certifications & Claim Verification: Organic, Kosher,\n                        etc.\n                    "
-                  )
-                ])
-              ])
-            ])
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "col-md-12 text-right" }, [
-            _c("button", { staticClass: "btn btn-success pull-right" }, [
-              _vm._v("Next")
-            ])
+    return _c("h4", [
+      _vm._v("\n                1.\n                "),
+      _c("span", { staticClass: "text-warning" }, [
+        _vm._v("GENERAL INFORMATION")
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("table", { staticClass: "table table-striped text-left" }, [
+      _c("thead", { staticClass: "thead-dark" }, [
+        _c("th", { attrs: { scope: "col" } }, [
+          _vm._v(
+            "\n                        DOCUMENT CHECK LIST TO COMPLETE THIS SPECIFICATION\n                    "
+          )
+        ])
+      ]),
+      _vm._v(" "),
+      _c("tbody", [
+        _c("tr", [
+          _c("td", { staticClass: "dim2 font-sm" }, [
+            _vm._v(
+              "\n                            Food Safety Certificates &\n                        "
+            )
+          ])
+        ]),
+        _vm._v(" "),
+        _c("tr", [
+          _c("td", { staticClass: "dim2 font-sm" }, [
+            _vm._v(
+              "\n                            Nutritional test reports - Certificate of\n                            Analysis\n                        "
+            )
+          ])
+        ]),
+        _vm._v(" "),
+        _c("tr", [
+          _c("td", { staticClass: "dim2 font-sm" }, [
+            _vm._v(
+              "\n                            Product Manufacturing flow chart\n                        "
+            )
+          ])
+        ]),
+        _vm._v(" "),
+        _c("tr", [
+          _c("td", { staticClass: "dim2 font-sm" }, [_vm._v("HACCPP Plan")])
+        ]),
+        _vm._v(" "),
+        _c("tr", [
+          _c("td", { staticClass: "dim2 font-sm" }, [
+            _vm._v(
+              "\n                            Allergen Mangement Plan\n                        "
+            )
+          ])
+        ]),
+        _vm._v(" "),
+        _c("tr", [
+          _c("td", { staticClass: "dim2 font-sm" }, [
+            _vm._v(
+              "\n                            Relevant certifications & Claim Verification:\n                            Organic, Kosher, etc.\n                        "
+            )
           ])
         ])
       ])
@@ -44064,6 +44116,13 @@ var render = function() {
           ]),
           _vm._v(" "),
           _c(
+            "div",
+            { staticClass: "text-center" },
+            [_vm.loadingIngredients ? _c("pulse-loader") : _vm._e()],
+            1
+          ),
+          _vm._v(" "),
+          _c(
             "button",
             {
               class:
@@ -44116,7 +44175,7 @@ var render = function() {
               [
                 _vm._l(_vm.ingredients, function(ingredient, index) {
                   return [
-                    _c("tr", { staticClass: "main-ingredient " }, [
+                    _c("tr", { staticClass: "main-ingredient" }, [
                       _c("td", { staticClass: "no-wrap" }, [
                         _vm._v(
                           "\n                                " +
@@ -44276,8 +44335,53 @@ var render = function() {
               ],
               2
             )
-          ])
-        ])
+          ]),
+          _vm._v(" "),
+          _c(
+            "div",
+            { staticClass: "text-center" },
+            [_vm.loadingIngredients ? _c("pulse-loader") : _vm._e()],
+            1
+          )
+        ]),
+        _vm._v(" "),
+        _c(
+          "div",
+          { staticClass: "modal-footer justify-content-between" },
+          [
+            _c("router-link", { attrs: { to: { name: "qa-general" } } }, [
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-secondary mr-auto",
+                  attrs: { type: "button" }
+                },
+                [_vm._v("\n                    Back\n                ")]
+              )
+            ]),
+            _vm._v(" "),
+            _c(
+              "router-link",
+              { attrs: { to: { name: "qa-ingredient-dec" } } },
+              [
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-primary ",
+                    attrs: { type: "button" },
+                    on: {
+                      click: function($event) {
+                        return _vm.validatePage($event)
+                      }
+                    }
+                  },
+                  [_vm._v("\n                    Next\n                ")]
+                )
+              ]
+            )
+          ],
+          1
+        )
       ]),
       _vm._v(" "),
       _vm.modalVisible
@@ -65634,14 +65738,15 @@ __webpack_require__.r(__webpack_exports__);
 /*!*************************************************!*\
   !*** ./resources/js/components/QaRecipeRaw.vue ***!
   \*************************************************/
-/*! exports provided: default */
+/*! no static exports found */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _QaRecipeRaw_vue_vue_type_template_id_52433d22___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./QaRecipeRaw.vue?vue&type=template&id=52433d22& */ "./resources/js/components/QaRecipeRaw.vue?vue&type=template&id=52433d22&");
 /* harmony import */ var _QaRecipeRaw_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./QaRecipeRaw.vue?vue&type=script&lang=js& */ "./resources/js/components/QaRecipeRaw.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _QaRecipeRaw_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _QaRecipeRaw_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -65671,7 +65776,7 @@ component.options.__file = "resources/js/components/QaRecipeRaw.vue"
 /*!**************************************************************************!*\
   !*** ./resources/js/components/QaRecipeRaw.vue?vue&type=script&lang=js& ***!
   \**************************************************************************/
-/*! exports provided: default */
+/*! no static exports found */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -65995,8 +66100,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! E:\www\VUE\merge\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! E:\www\VUE\merge\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! /Applications/XAMPP/xamppfiles/htdocs/QaRework/resources/js/app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! /Applications/XAMPP/xamppfiles/htdocs/QaRework/resources/sass/app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

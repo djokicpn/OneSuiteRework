@@ -166,6 +166,9 @@
                         </transition>
                     </tbody>
                 </table>
+                <div class="text-center">
+                    <pulse-loader v-if="loadingIngredients"></pulse-loader>
+                </div>
                 <button
                     :class="
                         this.addIngredient === true
@@ -206,6 +209,7 @@
                         >RAW MATERIAL COUNTRY OF ORIGIN</span
                     >
                 </h4>
+
                 <table class="table table-borderless">
                     <thead class="thead-dark">
                         <th class="no-wrap">Ingredient</th>
@@ -218,7 +222,7 @@
                     </thead>
                     <tbody>
                         <template v-for="(ingredient, index) in ingredients">
-                            <tr class="main-ingredient ">
+                            <tr class="main-ingredient">
                                 <td class="no-wrap">
                                     {{ index + 1 + ". " + ingredient.name }}
                                 </td>
@@ -330,6 +334,21 @@
                         </template>
                     </tbody>
                 </table>
+                <div class="text-center">
+                    <pulse-loader v-if="loadingIngredients"></pulse-loader>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <router-link :to="{ name: 'qa-general' }">
+                    <button type="button" class="btn btn-secondary mr-auto">
+                        Back
+                    </button>
+                </router-link>
+                <router-link :to="{ name: 'qa-ingredient-dec' }">
+                    <button type="button" class="btn btn-primary " @click="validatePage($event)">
+                        Next
+                    </button>
+                </router-link>
             </div>
         </div>
 
@@ -390,6 +409,7 @@ export default {
     },
     data() {
         return {
+            loadingIngredients: true,
             show: true,
             compoundToAdd: {
                 name: "",
@@ -434,6 +454,11 @@ export default {
     },
     methods: {
         addIngredientSubmit() {
+            if(this.addIngredient === true)
+                if(this.ingredientToAdd.name.length === 0 || this.ingredientToAdd.perc.length === 0) {
+                    this.$toast.warning(`Both name and percentage are mandatory!`);
+                    return
+                }
             if(!this.addIngredient) {
                 this.addIngredient = true;
                 this.$nextTick(function() {
@@ -444,7 +469,9 @@ export default {
                     ingredient: this.ingredientToAdd,
                     compounds: this.compoundsToAdd
                 }
+                this.loadingIngredients = true;
                  axios.post("/api/ingredients/save", {data: data}).then(response => {
+                     this.$toast.open(`${this.ingredientToAdd.name} ingredient successfuly added!`);
                     this.ingredients = response.data.data;
                     this.loadIngredients();
                     this.addCompoundShow = false;
@@ -475,8 +502,9 @@ export default {
                 confirmButtonText: 'Yes, delete it!'
             }).then((result)=> {
                 if(result.value) {
+                    this.loadingIngredients = true;
                     axios.post('/api/ingredients/delete', {id : ing.id}).then((response) => {
-                        this.$toast.open('Ingredient deleted!');
+                        this.$toast.open(`${ing.name} successfuly deleted!`);
                         this.loadIngredients();
                     });
                 }
@@ -489,6 +517,7 @@ export default {
 
             this.addCompoundShow ===  !this.addCompoundShow;
             this.compoundsToAdd.push(this.compoundToAdd);
+            this.$toast.open(`${this.compoundToAdd.name} added to ${this.ingredientToAdd.name} as compound (${this.compoundToAdd.perc} %)`);
             this.compoundToAdd = {};
             this.$refs.cmpAdd.focus();
 
@@ -522,6 +551,7 @@ export default {
         loadIngredients() {
             axios.get("/api/ingredients/list").then(response => {
                 this.ingredients = response.data.data;
+                this.loadingIngredients = false;
             });
         },
         loadCountries() {
@@ -551,6 +581,12 @@ export default {
         // select option from parent component
         selectFromParentComponent() {
             this.items = _.unionWith(this.items, [this.options[0]], _.isEqual);
+        },
+        validatePage(e) {
+            if(this.ingredientPercentageSum() !== 100) {
+                 e.preventDefault();
+                 return;
+            }
         }
     }
 };

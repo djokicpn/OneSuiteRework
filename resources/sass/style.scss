@@ -20,11 +20,6 @@ input[type=number] {
 .nowrap {
     white-space: nowrap !important;
 }
-
-.main-ingredient {
-    background-color: #0f2e41 !important;
-}
-
 .p-l-5 {
     padding-left: 2em !important;
 }
@@ -94,7 +89,7 @@ body {
 .modal-wrapper {
     display: table-cell;
     vertical-align: middle;
-    transition: all 0.2;
+    transition-duration: all 0.2;
 }
 
 .multi-wrap {

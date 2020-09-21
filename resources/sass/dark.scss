@@ -5,6 +5,10 @@ $inputBackground: #15161c;
 $baseText: #f8fafc;
 
 [data-theme="dark"] {
+    .main-ingredient {
+        background-color: #0f2e41 !important;
+    }
+
     .swal2-success-fix {
       background-color: $bodyColor !important;
     }
