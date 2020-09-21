@@ -11012,7 +11012,7 @@ body {
 }
 
 [data-theme=dark] .form-control {
-  border: 0 !important;
+  border: 0px !important;
 }
 
 [data-theme=dark] .user-input {
@@ -11197,6 +11197,10 @@ body {
 
 #nav a.router-link-exact-active {
   color: #42b983;
+}
+
+.btn {
+  cursor: pointer !important;
 }
 
 .swal2-styled.swal2-cancel {

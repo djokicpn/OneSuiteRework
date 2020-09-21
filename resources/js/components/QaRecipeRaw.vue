@@ -129,6 +129,15 @@
                                                             : 'btn btn-warning btn-sm'
                                                     "
                                                     @click="addCompound"
+                                                    :disabled="
+                                                        compoundPercentageSum() +
+                                                            parseInt(
+                                                                compoundToAdd.perc
+                                                            ) >
+                                                        100
+                                                            ? true
+                                                            : false
+                                                    "
                                                 >
                                                     {{
                                                         addCompoundShow === true
@@ -139,10 +148,16 @@
                                                 </button>
                                             </div>
                                             <span
-                                                v-if="percentageError"
+                                                v-if="
+                                                    compoundPercentageSum() +
+                                                        parseInt(
+                                                            compoundToAdd.perc
+                                                        ) >
+                                                        100
+                                                "
                                                 class="text-danger"
-                                                >Ingredients percentage must be
-                                                exactly 100.</span
+                                                >Sum of Compounds percentage
+                                                must be exactly 100.</span
                                             >
                                         </div>
                                     </transition>
@@ -157,10 +172,28 @@
                             ? 'btn btn-success'
                             : 'btn btn-warning'
                     "
+                    :disabled="
+                        ingredientPercentageSum() +
+                            parseInt(ingredientToAdd.perc) >
+                        100
+                            ? true
+                            : false
+                    "
                     @click="addIngredientSubmit"
                 >
                     {{ addIngredient === true ? "Save" : "Add" }} Ingredient
                 </button>
+                <br />
+                <span
+                    class="text-danger"
+                    v-if="
+                        ingredientPercentageSum() +
+                            parseInt(ingredientToAdd.perc) >
+                            100
+                    "
+                    >Sum of <b>Ingredients</b> percentage must be exactly
+                    <b>100</b>.
+                </span>
             </div>
         </div>
 
@@ -369,7 +402,7 @@ export default {
             },
             addIngredient: false,
             addCompoundShow: false,
-            percentageError: false,
+            // percentageError: false,
             selectedIngredient: {},
             countries: [
                 {id: 1, name: "USA"},
@@ -402,7 +435,6 @@ export default {
     methods: {
         addIngredientSubmit() {
             if(!this.addIngredient) {
-
                 this.addIngredient = true;
                 this.$nextTick(function() {
                     this.$refs.search.focus();
@@ -444,12 +476,8 @@ export default {
             }).then((result)=> {
                 if(result.value) {
                     axios.post('/api/ingredients/delete', {id : ing.id}).then((response) => {
-                        this.$swal({
-                        icon: 'success',
-                        title: 'Success!',
-                        text: `"${ing.name}" deleted!`
-                    })
-                    this.loadIngredients();
+                        this.$toast.open('Ingredient deleted!');
+                        this.loadIngredients();
                     });
                 }
             });
@@ -458,13 +486,8 @@ export default {
             if (!this.compoundToAdd.name.length > 1 || !this.compoundToAdd.perc > 0) {
                 return
             }
-            if ((this.compoundPercentageSum() + parseInt(this.compoundToAdd.perc)) > 100 || this.compoundToAdd.perc > 100) {
-                this.percentageError = true;
-                return
-            } else {
-                this.percentageError = false;
-            }
-            this.addCompoundShow === true ? this.addCompoundShow = false : this.addCompoundShow = true;
+
+            this.addCompoundShow ===  !this.addCompoundShow;
             this.compoundsToAdd.push(this.compoundToAdd);
             this.compoundToAdd = {};
             this.$refs.cmpAdd.focus();
@@ -477,6 +500,16 @@ export default {
                 this.compoundsToAdd.forEach(e => {
                     sum += parseInt(e.perc);
                 })
+                return sum;
+            }
+            return 0;
+        },
+        ingredientPercentageSum() {
+            let sum = 0;
+            if(this.ingredients.length > 0) {
+                this.ingredients.forEach(e=> {
+                    sum += parseInt(e.perc)
+                });
                 return sum;
             }
             return 0;

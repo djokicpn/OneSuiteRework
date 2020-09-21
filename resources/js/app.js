@@ -6,10 +6,14 @@ import App from './components/App.vue'
 import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
+import VueToast from 'vue-toast-notification';
+Vue.use(VueToast, {
+    position: 'bottom-right'
+});
+
 import routes from './routes'
 import VueSweetalert2 from 'vue-sweetalert2';
-
-
+import 'vue-toast-notification/dist/theme-default.css';
 
 Vue.use(VueSweetalert2);
 Vue.component('pulse-loader', require('vue-spinner/src/PulseLoader.vue').default);

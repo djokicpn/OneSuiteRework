@@ -11,11 +11,13 @@ use Illuminate\Http\Request;
 
 class IngredientController extends Controller
 {
-    public function listAll() {
+    public function listAll()
+    {
         return IngredientResource::collection(Item::find(1)->rawIngredients);
         // return Ingredient::with('compound')->get();
     }
-    public function save(Request $request) {
+    public function save(Request $request)
+    {
         $item = Item::find(1);
         $data = request()->data;
         $cmp = $data['compounds'];
@@ -31,7 +33,7 @@ class IngredientController extends Controller
         $item->rawIngredients()->attach($toRet);
 
 
-        foreach($cmp as $compound) {
+        foreach ($cmp as $compound) {
             $toSync = new NotAllowedIngredientSingle();
             $toSync->name = $compound['name'];
             $toSync->save();
@@ -41,18 +43,22 @@ class IngredientController extends Controller
                 'item_id'           => $item->id
             ];
         }
-        $ing->compounds()->sync($toRetCompounds);
+        if (isset($toRetCompounds))
+            $ing->compounds()->sync($toRetCompounds);
 
 
 
 
         return response()->json('Done!', 200);
     }
-    public function delete(Request $request) {
+    public function delete(Request $request)
+    {
         $item = Item::find(1);
         $ing = NotAllowedIngredientSingle::find(request()->id);
+
         $ing->compounds()->detach();
         $item->rawIngredients()->detach($ing);
+
         return response()->json(request()->id, 200);
     }
 }
