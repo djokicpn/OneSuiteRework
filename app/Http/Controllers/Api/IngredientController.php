@@ -16,6 +16,14 @@ class IngredientController extends Controller
         return IngredientResource::collection(Item::find(1)->rawIngredients);
         // return Ingredient::with('compound')->get();
     }
+    public function searchIngredients(Request $request)
+    {
+
+        $query = $request->get('query');
+//        return response()->json(NotAllowedIngredientSingle::select('id','name')->where('name', 'like', "%{$query}%")->take(10)->get(),200);
+        return response()->json(NotAllowedIngredientSingle::select('id','name')->where('name', 'like', "%{$query}%")->take(10)->get(),200);
+        // return Ingredient::with('compound')->get();
+    }
     public function save(Request $request)
     {
         $item = Item::find(1);

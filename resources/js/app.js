@@ -11,6 +11,9 @@ Vue.use(VueToast, {
     position: 'top',
     pauseOnHover: true
 });
+import vSelect from 'vue-select'
+
+Vue.component('v-select', vSelect)
 
 import routes from './routes'
 import VueSweetalert2 from 'vue-sweetalert2';

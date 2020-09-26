@@ -1,224 +1,188 @@
 <template>
     <div>
         <div class="box m-b-30">
+
             <div class="col-md-12 text-left">
+
+
                 <h4>
                     2.1
                     <span class="user-input">RECIPE & RAW MATERIAL</span>
                 </h4>
                 <table class="table table-borderless">
                     <thead class="thead-dark">
-                        <tr>
-                            <th>#</th>
-                            <th width="37%" class="user-input">Ingredient</th>
-                            <th width="5%" class="user-input">
-                                %
-                            </th>
-                            <th width="45%">
-                                Compound Ingredient (if applicable)
-                            </th>
-                            <th width="13%" class="text-center">Actions</th>
-                        </tr>
+                    <tr>
+                        <th>#</th>
+                        <th width="37%" class="user-input">Ingredient</th>
+                        <th width="5%" class="user-input">
+                            %
+                        </th>
+                        <th width="45%">
+                            Compound Ingredient (if applicable)
+                        </th>
+                        <th width="13%" class="text-center">Actions</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        <tr
-                            v-for="(ingredient, index) in ingredients"
-                            :key="ingredient.id"
-                        >
-                            <th scope="row">{{ index + 1 }}</th>
-                            <td>{{ ingredient.name }}</td>
-                            <td>{{ ingredient.perc }} %</td>
-                            <td>
+                    <tr
+                        v-for="(ingredient, index) in ingredients"
+                        :key="ingredient.id"
+                    >
+                        <th scope="row">{{ index + 1 }}</th>
+                        <td>{{ ingredient.name }}</td>
+                        <td>{{ ingredient.perc }} %</td>
+                        <td>
                                 <span
                                     class="multi-wrap"
                                     v-for="compound in ingredient.compound"
                                     :key="compound.id"
-                                    >{{ compound.name }} (
+                                >{{ compound.name }} (
                                     {{ compound.compound_perc }}% )</span
                                 >
+                        </td>
+                        <td class="text-right">
+                            <button
+                                class="btn btn-sm btn-primary btn-smaller"
+                                @click="showModal(ingredient)"
+                            >
+                                Edit
+                            </button>
+                            &nbsp;
+                            <button
+                                class="btn btn-sm btn-danger btn-smaller"
+                                @click="deleteIngredient(ingredient,index)"
+                            >
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                    <transition name="fade">
+                        <tr v-if="addIngredient">
+                            <td>#</td>
+                            <td>
+<!--                                <input-->
+<!--                                    type="text"-->
+<!--                                    class="form-control smaller-input"-->
+<!--                                    placeholder="Name"-->
+<!--                                    v-model="ingredientToAdd.name"-->
+<!--                                    @blur="-->
+<!--                                            $event.target.value.length === 0-->
+<!--                                                ? (addIngredient = false)-->
+<!--                                                : (addIngredient = true)-->
+<!--                                        "-->
+<!--                                    @keyup.enter.exact="-->
+<!--                                            focusNonEmpty(-->
+<!--                                                $event.target,-->
+<!--                                                'ingPerc'-->
+<!--                                            )-->
+<!--                                        "-->
+<!--                                    ref="search"-->
+<!--                                />-->
+                                <v-select label="name" :filterable="false"
+                                          :options="selectOptions"
+                                          @keyup.enter.exact="focusNonEmpty($event.target.value,'ingPerc')"
+                                          @input="setSelected" @search="onSearch"> </v-select>
                             </td>
-                            <td class="text-right">
-                                <button
-                                    class="btn btn-sm btn-primary btn-smaller"
-                                    @click="showModal(ingredient)"
-                                >
-                                    Edit
-                                </button>
-                                &nbsp;
-                                <button
-                                    class="btn btn-sm btn-danger btn-smaller"
-                                    @click="deleteIngredient(ingredient)"
-                                >
-                                    Delete
-                                </button>
-                            </td>
-                        </tr>
-                        <transition name="fade">
-                            <tr v-if="addIngredient">
-                                <td>#</td>
-                                <td>
-                                    <input
-                                        type="text"
-                                        class="form-control smaller-input"
-                                        placeholder="Name"
-                                        v-model="ingredientToAdd.name"
-                                        @blur="
-                                            $event.target.value.length === 0
-                                                ? (addIngredient = false)
-                                                : (addIngredient = true)
-                                        "
-                                        @keyup.enter.exact="
-                                            focusNonEmpty(
-                                                $event.target,
-                                                'ingPerc'
-                                            )
-                                        "
-                                        ref="search"
-                                    />
-                                </td>
 
-                                <td>
-                                    <input
-                                        type="number"
-                                        class="form-control smaller-input"
-                                        placeholder="%"
-                                        ref="ingPerc"
-                                        @keyup.enter.exact="
+
+                            <td>
+                                <input
+                                    type="number"
+                                    class="form-control smaller-input"
+                                    placeholder="%"
+                                    ref="ingPerc"
+                                    @keyup.enter.exact="
                                             focusNonEmpty(
-                                                $event.target,
+                                                $event.target.value,
                                                 'cmpAdd'
                                             )
                                         "
-                                        v-model="ingredientToAdd.perc"
-                                    />
-                                </td>
-                                <td>
-                                    <transition name="slide-fade">
-                                        <div
-                                            class="compound-area"
-                                            v-if="
+                                    v-model="ingredientToAdd.perc"
+                                />
+                            </td>
+                            <td>
+                                <transition name="slide-fade">
+                                    <div
+                                        class="compound-area"
+                                        v-if="
                                                 ingredientToAdd.name.length >
                                                     0 &&
                                                     ingredientToAdd.perc > 0
                                             "
-                                        >
-                                            <template
-                                                style="margin-bottom: 5px !important"
-                                                v-for="(cmp,
+                                    >
+                                        <template
+                                            style="margin-bottom: 5px !important"
+                                            v-for="(cmp,
                                                 index) in compoundsToAdd"
-                                            >
+                                        >
                                                 <span class="multi-wrap">
                                                     {{ cmp.name }} (
                                                     {{ cmp.perc }} % )
                                                 </span>
-                                                <span
-                                                    class="multi-wrap-danger"
-                                                    @click="deleteCmp(index)"
-                                                    >Delete</span
-                                                >
-                                                <br />
-                                            </template>
-                                            <div class="d-flex flex-nowrap">
-                                                <input
-                                                    type="text"
-                                                    class="form-control smaller-input"
-                                                    placeholder="Compound Ingredient Name"
-                                                    style="max-width: 325px"
-                                                    v-model="compoundToAdd.name"
-                                                    @keyup.enter.exact="
+                                            <span
+                                                class="multi-wrap-danger"
+                                                @click="deleteCmp(index)"
+                                            >Delete</span
+                                            >
+                                            <br/>
+                                        </template>
+                                        <div class="d-flex flex-nowrap">
+                                            <input
+                                                type="text"
+                                                class="form-control smaller-input"
+                                                placeholder="Compound Ingredient Name"
+                                                style="max-width: 325px"
+                                                v-model="compoundToAdd.name"
+                                                @keyup.enter.exact="
                                                         focusNonEmpty(
-                                                            $event.target,
+                                                            $event.target.value,
                                                             'cmpPerc'
                                                         )
                                                     "
-                                                    ref="cmpAdd"
-                                                />
-                                                <input
-                                                    type="number"
-                                                    class="form-control smaller-input"
-                                                    placeholder="%"
-                                                    style="margin: 0px 20px 0px 20px; max-width: 65px"
-                                                    v-model="compoundToAdd.perc"
-                                                    ref="cmpPerc"
-                                                    @keyup.enter.prevent="
+                                                ref="cmpAdd"
+                                            />
+                                            <input
+                                                type="number"
+                                                class="form-control smaller-input"
+                                                placeholder="%"
+                                                style="margin: 0px 20px 0px 20px; max-width: 65px"
+                                                v-model="compoundToAdd.perc"
+                                                ref="cmpPerc"
+                                                @keyup.enter.prevent="
                                                         addCompound()
                                                     "
-                                                />
-                                                <button
-                                                    class="nowrap"
-                                                    :class="
-                                                        addCompoundShow === true
-                                                            ? 'btn btn-success btn-sm'
-                                                            : 'btn btn-warning btn-sm'
-                                                    "
-                                                    @click="addCompound"
-                                                    :disabled="
-                                                        compoundPercentageSum() +
-                                                            parseInt(
-                                                                compoundToAdd.perc
-                                                            ) >
-                                                            100 ||
-                                                        !ingredientPercentageSum
-                                                            .valid
-                                                            ? true
-                                                            : false
-                                                    "
-                                                >
-                                                    {{
-                                                        addCompoundShow === true
-                                                            ? "Save"
-                                                            : "Add"
-                                                    }}
-                                                    Compound
-                                                </button>
-                                            </div>
-                                            <span
-                                                v-if="
-                                                    compoundPercentageSum() +
-                                                        parseInt(
-                                                            compoundToAdd.perc
-                                                        ) >
-                                                        100
-                                                "
-                                                class="text-danger"
-                                                >Sum of Compounds percentage
-                                                must be exactly 100.</span
-                                            >
+                                            />
+                                            <button
+                                                class="nowrap"
+                                                :class="addCompoundShow === true? 'btn btn-success btn-sm': 'btn btn-warning btn-sm'"
+                                                @click="addCompound"
+                                                :disabled="compoundPercentageSum > 100 || !ingredientPercentageSum.valid">
+                                                {{ addCompoundShow === true ? "Save" : "Add" }} Compound
+                                            </button>
                                         </div>
-                                    </transition>
-                                </td>
-                            </tr>
-                        </transition>
-
-                        <tr>
-                            <td></td>
-                            <td class="text-right"><b>Total:</b></td>
-                            <td
-                                :class="
-                                    !ingredientPercentageSum.valid
-                                        ? 'text-danger'
-                                        : ''
-                                "
-                            >
-                                {{ ingredientPercentageSum.sum }} %
+                                        <span v-if="compoundPercentageSum > 100" class="text-danger">Sum of Compounds percentagemust be exactly 100.</span>
+                                    </div>
+                                </transition>
                             </td>
                         </tr>
+                    </transition>
+
+                    <tr v-if="ingredients.length > 0">
+                        <td></td>
+                        <td class="text-right"><b>TOTAL:</b></td>
+                        <td :class="!ingredientPercentageSum.valid? 'text-danger': '' ">
+                            {{ ingredientPercentageSum.sum }} %
+                        </td>
+                    </tr>
                     </tbody>
                 </table>
                 <div class="text-center">
                     <pulse-loader v-if="loadingIngredients"></pulse-loader>
                 </div>
-                <button
-                    :class="
-                        this.addIngredient === true
-                            ? 'btn btn-success'
-                            : 'btn btn-warning'
-                    "
-                    @click="addIngredientSubmit"
-                >
+                <button :class="this.addIngredient === true ? 'btn btn-success' : 'btn btn-warning'" @click="addIngredientSubmit">
                     {{ addIngredient === true ? "Save" : "Add" }} Ingredient
                 </button>
-                <br />
+                <br/>
             </div>
         </div>
         <!--2.2-->
@@ -227,140 +191,119 @@
                 <h4>
                     2.2
                     <span class="user-input"
-                        >RAW MATERIAL COUNTRY OF ORIGIN</span
+                    >RAW MATERIAL COUNTRY OF ORIGIN</span
                     >
                 </h4>
                 <table class="table table-borderless">
                     <thead class="thead-dark">
-                        <th class="no-wrap">Ingredient</th>
-                        <th class="no-wrap">Ing. %</th>
-                        <th class="no-wrap">Overall %</th>
-                        <th>Ing. Supplier</th>
-                        <th>Supplier Site Location Address</th>
-                        <th>Country of Origin</th>
-                        <th>Country Where Processed (if different)</th>
+                    <th class="no-wrap">Ingredient</th>
+                    <th class="no-wrap">Ing. %</th>
+                    <th class="no-wrap">Overall %</th>
+                    <th>Ing. Supplier</th>
+                    <th>Supplier Site Location Address</th>
+                    <th>Country of Origin</th>
+                    <th>Country Where Processed (if different)</th>
                     </thead>
                     <tbody>
-                        <template v-for="(ingredient, index) in ingredients">
-                            <tr class="main-ingredient">
-                                <td class="no-wrap">
-                                    {{ index + 1 + ". " + ingredient.name }}
-                                </td>
-                                <td>{{ ingredient.perc }} %</td>
-                                <td>{{ ingredient.percentage }}</td>
-                                <td>
-                                    <input
-                                        type="text"
-                                        class="form-control"
-                                        :value="ingredient.supplier"
-                                        placeholder="Supplier name"
-                                    />
-                                </td>
-                                <td>
-                                    <input
-                                        type="text"
-                                        class="form-control"
-                                        :value="ingredient.location"
-                                        placeholder="Location"
-                                    />
-                                </td>
-                                <td>
-                                    <select name="" class="form-control">
-                                        <option value="999"
-                                            >Please select</option
-                                        >
-                                        <option
-                                            v-for="country in countries"
-                                            :value="country.id"
-                                            :key="country.id"
-                                            v-bind:selected="
-                                                country.id === 1 && country.id
-                                                    ? 'selected'
-                                                    : ''
-                                            "
-                                        >
-                                            {{ country.name }}
-                                        </option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <select name="" class="form-control">
-                                        <option value="999"
-                                            >Please select</option
-                                        >
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr
-                                v-for="(compound,
+                    <template v-for="(ingredient, index) in ingredients">
+                        <tr class="main-ingredient">
+                            <td class="no-wrap">
+                                {{ index + 1 + ". " + ingredient.name }}
+                            </td>
+                            <td>{{ ingredient.perc }} %</td>
+                            <td>{{ ingredient.percentage }}</td>
+                            <td>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    :value="ingredient.supplier"
+                                    placeholder="Supplier name"
+                                />
+                            </td>
+                            <td>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    :value="ingredient.location"
+                                    placeholder="Location"
+                                />
+                            </td>
+                            <td>
+                                <select name="" class="form-control">
+                                    <option value="999"
+                                    >Please select
+                                    </option
+                                    >
+                                    <option
+                                        v-for="country in countries"
+                                        :value="country.id"
+                                        :key="country.id"
+                                        v-bind:selected="country.id === 1 && country.id ? 'selected' : '' ">
+                                        {{ country.name }}
+                                    </option>
+                                </select>
+                            </td>
+                            <td>
+                                <select name="" class="form-control">
+                                    <option value="999"
+                                    >Please select
+                                    </option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr
+                            v-for="(compound,
                                 compound_index) in ingredient.compound"
-                                :key="compound.id"
-                            >
-                                <td class="no-wrap p-l-5">
-                                    {{
-                                        index +
-                                            1 +
-                                            "." +
-                                            (compound_index + 1) +
-                                            " " +
-                                            compound.name
-                                    }}
-                                </td>
-                                <td>{{ compound.perc }}</td>
-                                <td>
-                                    {{
-                                        (
-                                            (ingredient.perc *
-                                                compound.compound_perc) /
-                                            100
-                                        ).toFixed(2)
-                                    }}
-                                    %
-                                </td>
-                                <td>
-                                    <input
-                                        type="text"
-                                        class="form-control"
-                                        :value="compound.supplier"
-                                        placeholder="Supplier name"
-                                    />
-                                </td>
-                                <td>
-                                    <input
-                                        type="text"
-                                        class="form-control"
-                                        :value="compound.location"
-                                        placeholder="Location"
-                                    />
-                                </td>
-                                <td>
-                                    <select name="" class="form-control">
-                                        <option value="999"
-                                            >Please select</option
-                                        >
-                                        <option
-                                            v-for="country in countries"
-                                            :value="country.id"
-                                            :key="country.id"
-                                            v-bind:selected="
-                                                country.id === 1 && country.id
-                                                    ? 'selected'
-                                                    : ''
-                                            "
-                                        >
-                                            {{ country.name }}
-                                        </option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <select name="" class="form-control">
-                                        <option value="999"
-                                            >Please select</option
-                                        >
-                                    </select>
-                                </td>
-                            </tr>
-                        </template>
+                            :key="compound.id"
+                        >
+                            <td class="no-wrap p-l-5">
+                                {{index + 1 + "." + (compound_index + 1) + " " +compound.name}}
+                            </td>
+                            <td>{{ compound.perc }}</td>
+                            <td>
+                                {{((ingredient.perc *compound.compound_perc) / 100).toFixed(2)}} %
+                            </td>
+                            <td>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    :value="compound.supplier"
+                                    placeholder="Supplier name"
+                                />
+                            </td>
+                            <td>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    :value="compound.location"
+                                    placeholder="Location"
+                                />
+                            </td>
+                            <td>
+                                <select name="" class="form-control">
+                                    <option value="999"
+                                    >Please select
+                                    </option
+                                    >
+                                    <option
+                                        v-for="country in countries"
+                                        :value="country.id"
+                                        :key="country.id"
+                                        v-bind:selected="country.id === 1 && country.id? 'selected': ''">
+                                        {{ country.name }}
+                                    </option>
+                                </select>
+                            </td>
+                            <td>
+                                <select name="" class="form-control">
+                                    <option value="999"
+                                    >Please select
+                                    </option
+                                    >
+                                </select>
+                            </td>
+                        </tr>
+                    </template>
                     </tbody>
                 </table>
                 <div class="text-center">
@@ -400,9 +343,9 @@
             >
             </model-select>
             <span>Editing Ingredient: {{ selectedIngredient.name }}</span>
-            <br /><br />
+            <br/><br/>
             <div v-if="selectedIngredient.compound.length > 0">
-                <span>Compounds:</span> <br /><br />
+                <span>Compounds:</span> <br/><br/>
                 <p
                     v-for="compound in selectedIngredient.compound"
                     :key="compound.id"
@@ -432,9 +375,9 @@ export default {
         ModelSelect
     },
     watch: {
-        totalPerc: function(perc) {
-            if(perc>100)
-            this.$toast.warning(`Ingredient total can't exceed 100. You are ${perc-100} over a value!`);
+        totalPerc: function (perc) {
+            if (perc > 100)
+                this.$toast.warning(`Ingredient total can't exceed 100. You are ${perc - 100} over a value!`);
         },
         item: function (item) {
             console.log(item);
@@ -445,6 +388,7 @@ export default {
     },
     data() {
         return {
+            selectOptions: [],
             totalPerc: 0,
             loadingIngredients: true,
             show: true,
@@ -457,6 +401,7 @@ export default {
                 name: "",
                 perc: "",
             },
+
             addIngredient: false,
             addCompoundShow: false,
             // percentageError: false,
@@ -473,42 +418,59 @@ export default {
                 {value: "4", text: "cd" + " - " + "4"},
                 {value: "5", text: "de" + " - " + "5"}
             ],
+
             item: {
                 value: "",
                 text: ""
             },
             ingredients: {},
-            searchText: "", // If value is falsy, reset searchText & searchItem
             items: [],
-            lastSelectItem: {},
-            name: "Michael",
             modalVisible: false,
-            myCounter: 0
         };
     },
     mounted() {
         this.loadIngredients();
     },
     methods: {
-        focusNonEmpty(event,ref) {
-            if(event.value.length > 0 )
-            this.$nextTick(function() {
-                this.$refs[ref].focus();
-            });
+        setSelected(value) {
+
+            this.ingredientToAdd.id = value.id
+            this.ingredientToAdd.name = value.name
+            this.focusNonEmpty("value",'ingPerc')
+
+        },
+        onSearch(search, loading) {
+            loading(true);
+            this.search(loading, search, this);
+        },
+        search: _.debounce((loading, search, vm) => {
+                fetch(
+                    `/api/ingredients/search?query=${escape(search)}`
+                ).then(res => {
+                    res.json().then(json => (vm.selectOptions = json));
+                    loading(false);
+                });
+        }, 350),
+        focusNonEmpty(value, ref) {
+            if (value.length > 0)
+                this.$nextTick(function () {
+                    this.$refs[ref].focus();
+                });
         },
         addIngredientSubmit() {
-            if(!this.ingredientPercentageSum.valid) {
-                 this.$toast.warning(`Ingredient total can't exceed 100. You are ${this.ingredientPercentageSum.sum-100} over a value!`);
-                 return
+            if (!this.ingredientPercentageSum.valid) {
+                this.$toast.warning(`Ingredient total can't exceed 100. You are ${this.ingredientPercentageSum.sum - 100} over a value!`);
+                return
             }
-            if(this.addIngredient === true)
-                if(this.ingredientToAdd.name.length === 0 || this.ingredientToAdd.perc.length === 0) {
+            if (this.addIngredient === true)
+                if (this.ingredientToAdd.name.length === 0 || this.ingredientToAdd.perc.length === 0) {
+                    console.log(ingredientToAdd)
                     this.$toast.warning(`Both name and percentage are mandatory!`);
                     return
                 }
-            if(!this.addIngredient) {
+            if (!this.addIngredient) {
                 this.addIngredient = true;
-                this.$nextTick(function() {
+                this.$nextTick(function () {
                     this.$refs.search.focus();
                 });
             } else {
@@ -517,8 +479,8 @@ export default {
                     compounds: this.compoundsToAdd
                 }
                 this.loadingIngredients = true;
-                 axios.post("/api/ingredients/save", {data: data}).then(response => {
-                     this.$toast.open(`${this.ingredientToAdd.name} ingredient successfuly added!`);
+                axios.post("/api/ingredients/save", {data: data}).then(response => {
+                    this.$toast.open(`${this.ingredientToAdd.name} ingredient successfuly added!`);
                     this.ingredients = response.data.data;
                     this.loadIngredients();
                     this.addCompoundShow = false;
@@ -538,21 +500,23 @@ export default {
         deleteCmp(index) {
             this.compoundsToAdd.splice(index, 1);
         },
-        deleteIngredient(ing) {
+        deleteIngredient(ing,index) {
             this.$swal({
                 icon: 'warning',
-                title:`Deleting "${ing.name}"`,
+                title: `Deleting "${ing.name}"`,
                 text: 'Are you sure that you want do delete this ingredient?',
                 showCancelButton: true,
                 confirmButtonColor: '#e3342f',
                 cancelButotonColor: '#2cabe3',
                 confirmButtonText: 'Yes, delete it!'
-            }).then((result)=> {
-                if(result.value) {
+            }).then((result) => {
+                if (result.value) {
                     this.loadingIngredients = true;
-                    axios.post('/api/ingredients/delete', {id : ing.id}).then((response) => {
+                    axios.post('/api/ingredients/delete', {id: ing.id}).then((response) => {
                         this.$toast.open(`${ing.name} successfuly deleted!`);
+                        this.ingredients.splice(index,1);
                         this.loadIngredients();
+                        // this.loadingIngredients = false;
                     });
                 }
             });
@@ -562,7 +526,7 @@ export default {
                 return
             }
 
-            this.addCompoundShow ===  !this.addCompoundShow;
+            this.addCompoundShow === !this.addCompoundShow;
             this.compoundsToAdd.push(this.compoundToAdd);
             this.$toast.open(`${this.compoundToAdd.name} added to ${this.ingredientToAdd.name} as compound (${this.compoundToAdd.perc} %)`);
             this.compoundToAdd = {};
@@ -570,17 +534,7 @@ export default {
 
 
         },
-        compoundPercentageSum() {
-            let sum = 0;
-            if (this.compoundsToAdd.length > 0) {
-                this.compoundsToAdd.forEach(e => {
-                    sum += parseInt(e.perc);
-                })
-                return sum;
-            }
-            return 0;
-        },
-        
+
         showModal(ingredient) {
             this.selectedIngredient = ingredient;
             console.log(ingredient);
@@ -610,9 +564,9 @@ export default {
             this.items = _.unionWith(this.items, [this.options[0]], _.isEqual);
         },
         validatePage(e) {
-            if(this.ingredientPercentageSum.valid !== 100) {
-                 e.preventDefault();
-                 return;
+            if (this.ingredientPercentageSum.valid !== 100) {
+                e.preventDefault();
+                return;
             }
         }
     },
@@ -620,21 +574,27 @@ export default {
         ingredientPercentageSum() {
             console.log('event fired')
             let sum = 0;
-            if(this.ingredients != null && Object.keys(this.ingredients).length != 0) {
-                this.ingredients.forEach(e=> {
+            if (this.ingredients != null && Object.keys(this.ingredients).length != 0) {
+                this.ingredients.forEach(e => {
                     sum += parseInt(e.perc)
                 });
                 sum = sum + (parseInt(this.ingredientToAdd.perc) > 0 ? parseInt(this.ingredientToAdd.perc) : 0)
                 this.totalPerc != sum ? this.totalPerc = sum : false;
-                return {
-                    sum: sum,
-                    valid: sum>100?false:true
-                    };
             }
             return {
-                    sum: 0,
-                    valid: true
-                    };
+                sum: sum,
+                valid: true
+            };
+        },
+        compoundPercentageSum() {
+            let sum = 0;
+            if (this.compoundsToAdd.length > 0) {
+                this.compoundsToAdd.forEach(e => {
+                    sum += parseInt(e.perc);
+                })
+                sum = sum + (parseInt(this.compoundToAdd.perc) > 0 ? parseInt(this.compoundToAdd.perc) : 0)
+            }
+            return sum;
         }
     }
 };

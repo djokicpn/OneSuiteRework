@@ -32,6 +32,8 @@ Route::get('ingredients/list',      'Api\\IngredientController@listAll');
 Route::post('ingredients/save',      'Api\\IngredientController@save');
 Route::post('ingredients/delete',      'Api\\IngredientController@delete');
 
+Route::get('ingredients/search',      'Api\\IngredientController@searchIngredients');
+
 Route::get('ingredients/item',      function (Request $request) {
     return response()->json(IngredientResource::collection(Item::find(1)->rawIngredients));
 });

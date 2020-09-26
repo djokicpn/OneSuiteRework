@@ -5,6 +5,31 @@ $inputBackground: #15161c;
 $baseText: #f8fafc;
 
 [data-theme="dark"] {
+    .v-select {
+        background-color: $inputBackground;
+        color: $baseText !important;
+
+    }
+    .vs__dropdown-menu {
+        background-color: $inputBackground !important;
+        color: $baseText !important;
+    }
+    .vs__dropdown-option {
+        color: $baseText !important;
+    }
+
+
+    .vs__search {
+        background-color: $inputBackground;
+        color: $baseText !important;
+    }
+    .vs1__listbox {
+        background-color: $inputBackground;
+        color: $baseText !important;
+    }
+    .vs__selected {
+        color:$baseText;
+    }
     .main-ingredient {
         background-color: #0f2e41 !important;
     }
