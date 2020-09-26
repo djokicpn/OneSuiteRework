@@ -62,8 +62,17 @@
                                         class="form-control smaller-input"
                                         placeholder="Name"
                                         v-model="ingredientToAdd.name"
-                                        @blur="$event.target.value.length === 0 ? addIngredient=false : addIngredient=true"
-                                        @keyup.enter.exact="focusNonEmpty($event.target,'ingPerc')"
+                                        @blur="
+                                            $event.target.value.length === 0
+                                                ? (addIngredient = false)
+                                                : (addIngredient = true)
+                                        "
+                                        @keyup.enter.exact="
+                                            focusNonEmpty(
+                                                $event.target,
+                                                'ingPerc'
+                                            )
+                                        "
                                         ref="search"
                                     />
                                 </td>
@@ -74,7 +83,12 @@
                                         class="form-control smaller-input"
                                         placeholder="%"
                                         ref="ingPerc"
-                                        @keyup.enter.exact="focusNonEmpty($event.target,'cmpAdd')"
+                                        @keyup.enter.exact="
+                                            focusNonEmpty(
+                                                $event.target,
+                                                'cmpAdd'
+                                            )
+                                        "
                                         v-model="ingredientToAdd.perc"
                                     />
                                 </td>
@@ -111,7 +125,12 @@
                                                     placeholder="Compound Ingredient Name"
                                                     style="max-width: 325px"
                                                     v-model="compoundToAdd.name"
-                                                    @keyup.enter.exact="focusNonEmpty($event.target,'cmpPerc')"
+                                                    @keyup.enter.exact="
+                                                        focusNonEmpty(
+                                                            $event.target,
+                                                            'cmpPerc'
+                                                        )
+                                                    "
                                                     ref="cmpAdd"
                                                 />
                                                 <input
@@ -138,7 +157,9 @@
                                                             parseInt(
                                                                 compoundToAdd.perc
                                                             ) >
-                                                        100 || !ingredientPercentageSum().valid
+                                                            100 ||
+                                                        !ingredientPercentageSum
+                                                            .valid
                                                             ? true
                                                             : false
                                                     "
@@ -167,13 +188,21 @@
                                     </transition>
                                 </td>
                             </tr>
-
                         </transition>
+
                         <tr>
-                                <td></td>
-                                <td><b>Total:</b> </td>
-                                <td :class="!ingredientPercentageSum().valid? 'text-danger' : ''">{{ ingredientPercentageSum().sum }} %</td>
-                            </tr>
+                            <td></td>
+                            <td class="text-right"><b>Total:</b></td>
+                            <td
+                                :class="
+                                    !ingredientPercentageSum.valid
+                                        ? 'text-danger'
+                                        : ''
+                                "
+                            >
+                                {{ ingredientPercentageSum.sum }} %
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
                 <div class="text-center">
@@ -185,22 +214,11 @@
                             ? 'btn btn-success'
                             : 'btn btn-warning'
                     "
-                    :disabled="
-                        !ingredientPercentageSum().valid
-                    "
                     @click="addIngredientSubmit"
                 >
                     {{ addIngredient === true ? "Save" : "Add" }} Ingredient
                 </button>
                 <br />
-                <span
-                    class="text-danger"
-                    v-if="
-                        !ingredientPercentageSum().valid
-                    "
-                    >Sum of <b>Ingredients</b> percentage must be exactly
-                    <b>100</b>.
-                </span>
             </div>
         </div>
         <!--2.2-->
@@ -289,7 +307,16 @@
                                     }}
                                 </td>
                                 <td>{{ compound.perc }}</td>
-                                <td>{{ ((ingredient.perc * compound.compound_perc) / 100).toFixed(2) }} %</td>
+                                <td>
+                                    {{
+                                        (
+                                            (ingredient.perc *
+                                                compound.compound_perc) /
+                                            100
+                                        ).toFixed(2)
+                                    }}
+                                    %
+                                </td>
                                 <td>
                                     <input
                                         type="text"
@@ -470,6 +497,10 @@ export default {
             });
         },
         addIngredientSubmit() {
+            if(!this.ingredientPercentageSum.valid) {
+                 this.$toast.warning(`Ingredient total can't exceed 100. You are ${this.ingredientPercentageSum.sum-100} over a value!`);
+                 return
+            }
             if(this.addIngredient === true)
                 if(this.ingredientToAdd.name.length === 0 || this.ingredientToAdd.perc.length === 0) {
                     this.$toast.warning(`Both name and percentage are mandatory!`);
@@ -549,22 +580,7 @@ export default {
             }
             return 0;
         },
-        ingredientPercentageSum() {
-            console.log('event fired')
-            let sum = 0;
-            if(Object.keys(this.ingredients).length != 0) {
-                this.ingredients.forEach(e=> {
-                    sum += parseInt(e.perc)
-                });
-                sum = sum + (parseInt(this.ingredientToAdd.perc) > 0 ? parseInt(this.ingredientToAdd.perc) : 0)
-                this.totalPerc != sum ? this.totalPerc = sum : false;
-                return {
-                    sum: sum,
-                    valid: sum>100?false:true
-                    };
-            }
-            return 0;
-        },
+        
         showModal(ingredient) {
             this.selectedIngredient = ingredient;
             console.log(ingredient);
@@ -577,19 +593,8 @@ export default {
             });
         },
         loadCountries() {
-            axios.get("/api/ingredients/list").then(response => {
+            axios.get("/api/countries/list").then(response => {
                 this.ingredients = response.data.data;
-            });
-        },
-        clickedSave() {
-            console.log(++this.myCounter);
-        },
-        searchInit(search) {
-            axios.get("/api/categories").then(response => {
-                const data = JSON.parse(JSON.stringify(response.data.data));
-                const options = JSON.parse(JSON.stringify(this.options));
-                console.log(data);
-                console.log(options);
             });
         },
         onSelect(items, lastSelectItem) {
@@ -605,10 +610,31 @@ export default {
             this.items = _.unionWith(this.items, [this.options[0]], _.isEqual);
         },
         validatePage(e) {
-            if(this.ingredientPercentageSum().valid !== 100) {
+            if(this.ingredientPercentageSum.valid !== 100) {
                  e.preventDefault();
                  return;
             }
+        }
+    },
+    computed: {
+        ingredientPercentageSum() {
+            console.log('event fired')
+            let sum = 0;
+            if(this.ingredients != null && Object.keys(this.ingredients).length != 0) {
+                this.ingredients.forEach(e=> {
+                    sum += parseInt(e.perc)
+                });
+                sum = sum + (parseInt(this.ingredientToAdd.perc) > 0 ? parseInt(this.ingredientToAdd.perc) : 0)
+                this.totalPerc != sum ? this.totalPerc = sum : false;
+                return {
+                    sum: sum,
+                    valid: sum>100?false:true
+                    };
+            }
+            return {
+                    sum: 0,
+                    valid: true
+                    };
         }
     }
 };

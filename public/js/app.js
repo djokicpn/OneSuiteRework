@@ -2632,6 +2632,33 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
  // import { MultiSelect } from "vue-search-select";
 // import { ModelListSelect } from "vue-search-select";
@@ -2726,6 +2753,11 @@ __webpack_require__.r(__webpack_exports__);
     addIngredientSubmit: function addIngredientSubmit() {
       var _this = this;
 
+      if (!this.ingredientPercentageSum.valid) {
+        this.$toast.warning("Ingredient total can't exceed 100. You are ".concat(this.ingredientPercentageSum.sum - 100, " over a value!"));
+        return;
+      }
+
       if (this.addIngredient === true) if (this.ingredientToAdd.name.length === 0 || this.ingredientToAdd.perc.length === 0) {
         this.$toast.warning("Both name and percentage are mandatory!");
         return;
@@ -2813,24 +2845,6 @@ __webpack_require__.r(__webpack_exports__);
 
       return 0;
     },
-    ingredientPercentageSum: function ingredientPercentageSum() {
-      console.log('event fired');
-      var sum = 0;
-
-      if (Object.keys(this.ingredients).length != 0) {
-        this.ingredients.forEach(function (e) {
-          sum += parseInt(e.perc);
-        });
-        sum = sum + (parseInt(this.ingredientToAdd.perc) > 0 ? parseInt(this.ingredientToAdd.perc) : 0);
-        this.totalPerc != sum ? this.totalPerc = sum : false;
-        return {
-          sum: sum,
-          valid: sum > 100 ? false : true
-        };
-      }
-
-      return 0;
-    },
     showModal: function showModal(ingredient) {
       this.selectedIngredient = ingredient;
       console.log(ingredient);
@@ -2847,21 +2861,8 @@ __webpack_require__.r(__webpack_exports__);
     loadCountries: function loadCountries() {
       var _this4 = this;
 
-      axios.get("/api/ingredients/list").then(function (response) {
+      axios.get("/api/countries/list").then(function (response) {
         _this4.ingredients = response.data.data;
-      });
-    },
-    clickedSave: function clickedSave() {
-      console.log(++this.myCounter);
-    },
-    searchInit: function searchInit(search) {
-      var _this5 = this;
-
-      axios.get("/api/categories").then(function (response) {
-        var data = JSON.parse(JSON.stringify(response.data.data));
-        var options = JSON.parse(JSON.stringify(_this5.options));
-        console.log(data);
-        console.log(options);
       });
     },
     onSelect: function onSelect(items, lastSelectItem) {
@@ -2877,10 +2878,33 @@ __webpack_require__.r(__webpack_exports__);
       this.items = lodash__WEBPACK_IMPORTED_MODULE_1___default.a.unionWith(this.items, [this.options[0]], lodash__WEBPACK_IMPORTED_MODULE_1___default.a.isEqual);
     },
     validatePage: function validatePage(e) {
-      if (this.ingredientPercentageSum().valid !== 100) {
+      if (this.ingredientPercentageSum.valid !== 100) {
         e.preventDefault();
         return;
       }
+    }
+  },
+  computed: {
+    ingredientPercentageSum: function ingredientPercentageSum() {
+      console.log('event fired');
+      var sum = 0;
+
+      if (this.ingredients != null && Object.keys(this.ingredients).length != 0) {
+        this.ingredients.forEach(function (e) {
+          sum += parseInt(e.perc);
+        });
+        sum = sum + (parseInt(this.ingredientToAdd.perc) > 0 ? parseInt(this.ingredientToAdd.perc) : 0);
+        this.totalPerc != sum ? this.totalPerc = sum : false;
+        return {
+          sum: sum,
+          valid: sum > 100 ? false : true
+        };
+      }
+
+      return {
+        sum: 0,
+        valid: true
+      };
     }
   }
 });
@@ -44122,7 +44146,7 @@ var render = function() {
                                                         _vm.compoundToAdd.perc
                                                       ) >
                                                       100 ||
-                                                    !_vm.ingredientPercentageSum()
+                                                    !_vm.ingredientPercentageSum
                                                       .valid
                                                       ? true
                                                       : false
@@ -44179,11 +44203,17 @@ var render = function() {
                   _c(
                     "td",
                     {
-                      class: !_vm.ingredientPercentageSum().valid
+                      class: !_vm.ingredientPercentageSum.valid
                         ? "text-danger"
                         : ""
                     },
-                    [_vm._v(_vm._s(_vm.ingredientPercentageSum().sum) + " %")]
+                    [
+                      _vm._v(
+                        "\n                            " +
+                          _vm._s(_vm.ingredientPercentageSum.sum) +
+                          " %\n                        "
+                      )
+                    ]
                   )
                 ])
               ],
@@ -44205,7 +44235,6 @@ var render = function() {
                 this.addIngredient === true
                   ? "btn btn-success"
                   : "btn btn-warning",
-              attrs: { disabled: !_vm.ingredientPercentageSum().valid },
               on: { click: _vm.addIngredientSubmit }
             },
             [
@@ -44217,17 +44246,7 @@ var render = function() {
             ]
           ),
           _vm._v(" "),
-          _c("br"),
-          _vm._v(" "),
-          !_vm.ingredientPercentageSum().valid
-            ? _c("span", { staticClass: "text-danger" }, [
-                _vm._v("Sum of "),
-                _c("b", [_vm._v("Ingredients")]),
-                _vm._v(" percentage must be exactly\n                "),
-                _c("b", [_vm._v("100")]),
-                _vm._v(".\n            ")
-              ])
-            : _vm._e()
+          _c("br")
         ])
       ]),
       _vm._v(" "),
@@ -44335,12 +44354,14 @@ var render = function() {
                         _vm._v(" "),
                         _c("td", [
                           _vm._v(
-                            _vm._s(
-                              (
-                                (ingredient.perc * compound.compound_perc) /
-                                100
-                              ).toFixed(2)
-                            ) + " %"
+                            "\n                                " +
+                              _vm._s(
+                                (
+                                  (ingredient.perc * compound.compound_perc) /
+                                  100
+                                ).toFixed(2)
+                              ) +
+                              "\n                                %\n                            "
                           )
                         ]),
                         _vm._v(" "),
@@ -44579,7 +44600,9 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("td", [_c("b", [_vm._v("Total:")])])
+    return _c("td", { staticClass: "text-right" }, [
+      _c("b", [_vm._v("Total:")])
+    ])
   },
   function() {
     var _vm = this
@@ -66163,8 +66186,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /Applications/XAMPP/xamppfiles/htdocs/QaRework/resources/js/app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! /Applications/XAMPP/xamppfiles/htdocs/QaRework/resources/sass/app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! E:\www\VUE\merge\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! E:\www\VUE\merge\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
