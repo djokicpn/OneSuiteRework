@@ -8,7 +8,8 @@ Vue.use(VueRouter)
 
 import VueToast from 'vue-toast-notification';
 Vue.use(VueToast, {
-    position: 'bottom-right'
+    position: 'top',
+    pauseOnHover: true
 });
 
 import routes from './routes'
