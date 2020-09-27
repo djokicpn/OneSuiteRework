@@ -29,31 +29,96 @@
                         :key="ingredient.id"
                     >
                         <th scope="row">{{ index + 1 }}</th>
-                        <td>{{ ingredient.name }}</td>
-                        <td>{{ ingredient.perc }} %</td>
                         <td>
-                                <span
-                                    class="multi-wrap"
-                                    v-for="compound in ingredient.compound"
-                                    :key="compound.id"
-                                >{{ compound.name }} (
-                                    {{ compound.compound_perc }}% )</span
-                                >
+                            <div v-if="editIndex === index">
+                                          <!-- :value='{id: ingredientToEdit.id, name: ingredientToEdit.name}' -->
+                                <v-select label="name" :filterable="false"
+                                          :value='{id: ingredientToEdit.id, name: ingredientToEdit.name}'
+                                          :options="selectOptions"
+                                          @input="setSelected"
+                                          @search="onSearch"
+                                          ref="dropdown"
+                                          >
+                                          <template slot="no-options">
+                                            type to search ingredients...
+                                            </template>
+                                </v-select>
+                            </div>
+                            <div v-else>
+                                {{ ingredient.name }}
+                            </div>
+                        </td>
+                        <td>
+                            <div v-if="editIndex === index">
+                                <input
+                                    type="number"
+                                    class="form-control smaller-input"
+                                    :placeholder="100-ingredientPercentageSum.sum + ' %'"
+                                    ref="ingPerc"
+                                    v-model="ingredientToEdit.perc"
+                                />
+                            </div>
+
+                            <div v-else>
+                                 {{ ingredient.perc }} %
+                            </div>
+                        </td>
+                        <td>
+                             
+                            <div v-if="editIndex === index">
+                                <template style="margin-bottom: 5px !important" v-for="(cmp, index) in ingredientToEdit.compound" >
+                                    <span class="multi-wrap">
+                                        {{ cmp.name }} ({{ cmp.compound_perc }} % )
+                                    </span>
+                                    <span class="multi-wrap-danger" @click="deleteEditCmp(index)">
+                                        Delete
+                                    </span>
+                                    <br/>
+                                </template>
+                                <div class="d-flex flex-nowrap">
+                                    <v-select style="max-width: 325px; min-width:300px" label="name" :filterable="false"
+                                            :options="selectOptions"
+                                            :value="compoundToAdd"
+                                            @keyup.enter.exact="focusNonEmpty($event.target.value,'cmpPerc')"
+                                            @input="setSelectedComp"
+                                            @search="onSearch"
+                                            ref="cmpAddSelect">
+                                    </v-select>
+                                    <input
+                                        type="number"
+                                        class="form-control smaller-input"
+                                        :placeholder="100-compoundPercentageSum + ' %'"
+                                        style="margin: 0px 20px 0px 20px; max-width: 65px"
+                                        v-model="compoundToAdd.perc"
+                                        ref="cmpPerc"
+                                        @keyup.enter.prevent="
+                                                addCompound()
+                                            "
+                                    />
+                                    <button
+                                        class="nowrap"
+                                        :class="addCompoundShow === true? 'btn btn-success btn-sm': 'btn btn-warning btn-sm'"
+                                        @click="addCompound"
+                                        :disabled="compoundPercentageSum > 100 || !ingredientPercentageSum.valid">
+                                        {{ addCompoundShow === true ? "Save" : "Add" }} Compound
+                                    </button>
+                                </div>
+                                <span v-if="compoundPercentageSum > 100" class="text-danger">Sum of Compounds percentagemust be exactly 100.</span>
+                            </div>
+                            <div v-else>
+                                <span class="multi-wrap" v-for="compound in ingredient.compound" :key="compound.id" >
+                                    {{ compound.name }} ( {{ compound.compound_perc }}% )
+                                </span>
+                            </div>
                         </td>
                         <td class="text-right">
-                            <button
-                                class="btn btn-sm btn-primary btn-smaller"
-                                @click="showModal(ingredient)"
-                            >
-                                Edit
-                            </button>
-                            &nbsp;
-                            <button
-                                class="btn btn-sm btn-danger btn-smaller"
-                                @click="deleteIngredient(ingredient,index)"
-                            >
-                                Delete
-                            </button>
+                            <div v-if="editIndex === index" style="display:inline !important">
+                                <button class="btn btn-sm btn-success" @click="editIndex = null">Save</button>
+                            </div>
+                            <div v-else>
+                                <button class="btn btn-sm btn-primary btn-smaller" @click="editIngredient(ingredient,index)"> Edit</button>&nbsp;
+                                <button class="btn btn-sm btn-danger btn-smaller" @click="deleteIngredient(ingredient,index)"> Delete</button>
+                            </div>
                         </td>
                     </tr>
                     <transition name="fade">
@@ -97,36 +162,22 @@
                                 <input
                                     type="number"
                                     class="form-control smaller-input"
-                                    placeholder="%"
+                                    :placeholder="100-ingredientPercentageSum.sum + ' %'"
                                     ref="ingPerc"
-                                    @keyup.enter.exact="$refs.cmpAddSelect.$refs.search.focus()"
+                                    @keyup.enter.exact="!ingredientPercentageSum.valid  ? false : $refs.cmpAddSelect.$refs.search.focus()"
                                     v-model="ingredientToAdd.perc"
                                 />
                             </td>
                             <td>
                                 <transition name="slide-fade">
-                                    <div
-                                        class="compound-area"
-                                        v-if="
-                                                ingredientToAdd.name.length >
-                                                    0 &&
-                                                    ingredientToAdd.perc > 0
-                                            "
-                                    >
-                                        <template
-                                            style="margin-bottom: 5px !important"
-                                            v-for="(cmp,
-                                                index) in compoundsToAdd"
-                                        >
-                                                <span class="multi-wrap">
-                                                    {{ cmp.name }} (
-                                                    {{ cmp.perc }} % )
-                                                </span>
-                                            <span
-                                                class="multi-wrap-danger"
-                                                @click="deleteCmp(index)"
-                                            >Delete</span
-                                            >
+                                    <div class="compound-area" v-if="ingredientToAdd.name.length > 0 && ingredientToAdd.perc > 0">
+                                        <template style="margin-bottom: 5px !important" v-for="(cmp, index) in compoundsToAdd">
+                                            <span class="multi-wrap">
+                                                {{ cmp.name }} ({{ cmp.perc }} % )
+                                            </span>
+                                            <span class="multi-wrap-danger" @click="deleteCmp(index)">
+                                                Delete
+                                            </span>
                                             <br/>
                                         </template>
                                         <div class="d-flex flex-nowrap">
@@ -155,7 +206,7 @@
                                             <input
                                                 type="number"
                                                 class="form-control smaller-input"
-                                                placeholder="%"
+                                                :placeholder="100-compoundPercentageSum + ' %'"
                                                 style="margin: 0px 20px 0px 20px; max-width: 65px"
                                                 v-model="compoundToAdd.perc"
                                                 ref="cmpPerc"
@@ -399,6 +450,7 @@ export default {
     },
     data() {
         return {
+            editIndex: null,
             selectOptions: [],
             totalPerc: 0,
             loadingIngredients: true,
@@ -411,8 +463,11 @@ export default {
             ingredientToAdd: {
                 name: "",
                 perc: "",
+            }, 
+            ingredientToEdit: {
+                name: "",
+                perc: "",
             },
-
             addIngredient: false,
             addCompoundShow: false,
             // percentageError: false,
@@ -443,6 +498,14 @@ export default {
         this.loadIngredients();
     },
     methods: {
+        editingIngredient(index) {
+            return index === this.editIndex;
+        },
+        editIngredient(ingredient,index) {
+            this.editIndex = index;
+            this.ingredientToEdit = ingredient;
+            this.editingIngredient = true;
+        },
         setSelected(value) {
 
             this.ingredientToAdd.id = value.id
@@ -518,6 +581,9 @@ export default {
         deleteCmp(index) {
             this.compoundsToAdd.splice(index, 1);
         },
+        deleteEditCmp(index) {
+            this.ingredientToEdit.compound.splice(index, 1);
+        },
         deleteIngredient(ing,index) {
             this.$swal({
                 icon: 'warning',
@@ -589,6 +655,7 @@ export default {
         }
     },
     computed: {
+   
         ingredientPercentageSum() {
             console.log('event fired')
             let sum = 0;

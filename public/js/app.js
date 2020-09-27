@@ -2613,6 +2613,57 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
  // import { MultiSelect } from "vue-search-select";
 // import { ModelListSelect } from "vue-search-select";
@@ -2639,6 +2690,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
+      editIndex: null,
       selectOptions: [],
       totalPerc: 0,
       loadingIngredients: true,
@@ -2649,6 +2701,10 @@ __webpack_require__.r(__webpack_exports__);
       },
       compoundsToAdd: [],
       ingredientToAdd: {
+        name: "",
+        perc: ""
+      },
+      ingredientToEdit: {
         name: "",
         perc: ""
       },
@@ -2695,6 +2751,14 @@ __webpack_require__.r(__webpack_exports__);
     this.loadIngredients();
   },
   methods: {
+    editingIngredient: function editingIngredient(index) {
+      return index === this.editIndex;
+    },
+    editIngredient: function editIngredient(ingredient, index) {
+      this.editIndex = index;
+      this.ingredientToEdit = ingredient;
+      this.editingIngredient = true;
+    },
     setSelected: function setSelected(value) {
       this.ingredientToAdd.id = value.id;
       this.ingredientToAdd.name = value.name;
@@ -2769,6 +2833,9 @@ __webpack_require__.r(__webpack_exports__);
     },
     deleteCmp: function deleteCmp(index) {
       this.compoundsToAdd.splice(index, 1);
+    },
+    deleteEditCmp: function deleteEditCmp(index) {
+      this.ingredientToEdit.compound.splice(index, 1);
     },
     deleteIngredient: function deleteIngredient(ing, index) {
       var _this2 = this;
@@ -43743,65 +43810,351 @@ var render = function() {
                       _vm._v(_vm._s(index + 1))
                     ]),
                     _vm._v(" "),
-                    _c("td", [_vm._v(_vm._s(ingredient.name))]),
-                    _vm._v(" "),
-                    _c("td", [_vm._v(_vm._s(ingredient.perc) + " %")]),
-                    _vm._v(" "),
-                    _c(
-                      "td",
-                      _vm._l(ingredient.compound, function(compound) {
-                        return _c(
-                          "span",
-                          { key: compound.id, staticClass: "multi-wrap" },
-                          [
+                    _c("td", [
+                      _vm.editIndex === index
+                        ? _c(
+                            "div",
+                            [
+                              _c(
+                                "v-select",
+                                {
+                                  ref: "dropdown",
+                                  refInFor: true,
+                                  attrs: {
+                                    label: "name",
+                                    filterable: false,
+                                    value: {
+                                      id: _vm.ingredientToEdit.id,
+                                      name: _vm.ingredientToEdit.name
+                                    },
+                                    options: _vm.selectOptions
+                                  },
+                                  on: {
+                                    input: _vm.setSelected,
+                                    search: _vm.onSearch
+                                  }
+                                },
+                                [
+                                  _c("template", { slot: "no-options" }, [
+                                    _vm._v(
+                                      "\n                                            type to search ingredients...\n                                            "
+                                    )
+                                  ])
+                                ],
+                                2
+                              )
+                            ],
+                            1
+                          )
+                        : _c("div", [
                             _vm._v(
-                              _vm._s(compound.name) +
-                                " (\n                                    " +
-                                _vm._s(compound.compound_perc) +
-                                "% )"
+                              "\n                                " +
+                                _vm._s(ingredient.name) +
+                                "\n                            "
                             )
-                          ]
-                        )
-                      }),
-                      0
-                    ),
+                          ])
+                    ]),
+                    _vm._v(" "),
+                    _c("td", [
+                      _vm.editIndex === index
+                        ? _c("div", [
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.ingredientToEdit.perc,
+                                  expression: "ingredientToEdit.perc"
+                                }
+                              ],
+                              ref: "ingPerc",
+                              refInFor: true,
+                              staticClass: "form-control smaller-input",
+                              attrs: {
+                                type: "number",
+                                placeholder:
+                                  100 - _vm.ingredientPercentageSum.sum + " %"
+                              },
+                              domProps: { value: _vm.ingredientToEdit.perc },
+                              on: {
+                                input: function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.$set(
+                                    _vm.ingredientToEdit,
+                                    "perc",
+                                    $event.target.value
+                                  )
+                                }
+                              }
+                            })
+                          ])
+                        : _c("div", [
+                            _vm._v(
+                              "\n                                 " +
+                                _vm._s(ingredient.perc) +
+                                " %\n                            "
+                            )
+                          ])
+                    ]),
+                    _vm._v(" "),
+                    _c("td", [
+                      _vm.editIndex === index
+                        ? _c(
+                            "div",
+                            [
+                              _vm._l(_vm.ingredientToEdit.compound, function(
+                                cmp,
+                                index
+                              ) {
+                                return [
+                                  _c("span", { staticClass: "multi-wrap" }, [
+                                    _vm._v(
+                                      "\n                                        " +
+                                        _vm._s(cmp.name) +
+                                        " (" +
+                                        _vm._s(cmp.compound_perc) +
+                                        " % )\n                                    "
+                                    )
+                                  ]),
+                                  _vm._v(" "),
+                                  _c(
+                                    "span",
+                                    {
+                                      staticClass: "multi-wrap-danger",
+                                      on: {
+                                        click: function($event) {
+                                          return _vm.deleteEditCmp(index)
+                                        }
+                                      }
+                                    },
+                                    [
+                                      _vm._v(
+                                        "\n                                        Delete\n                                    "
+                                      )
+                                    ]
+                                  ),
+                                  _vm._v(" "),
+                                  _c("br")
+                                ]
+                              }),
+                              _vm._v(" "),
+                              _c(
+                                "div",
+                                { staticClass: "d-flex flex-nowrap" },
+                                [
+                                  _c("v-select", {
+                                    ref: "cmpAddSelect",
+                                    refInFor: true,
+                                    staticStyle: {
+                                      "max-width": "325px",
+                                      "min-width": "300px"
+                                    },
+                                    attrs: {
+                                      label: "name",
+                                      filterable: false,
+                                      options: _vm.selectOptions,
+                                      value: _vm.compoundToAdd
+                                    },
+                                    on: {
+                                      keyup: function($event) {
+                                        if (
+                                          !$event.type.indexOf("key") &&
+                                          _vm._k(
+                                            $event.keyCode,
+                                            "enter",
+                                            13,
+                                            $event.key,
+                                            "Enter"
+                                          )
+                                        ) {
+                                          return null
+                                        }
+                                        if (
+                                          $event.ctrlKey ||
+                                          $event.shiftKey ||
+                                          $event.altKey ||
+                                          $event.metaKey
+                                        ) {
+                                          return null
+                                        }
+                                        return _vm.focusNonEmpty(
+                                          $event.target.value,
+                                          "cmpPerc"
+                                        )
+                                      },
+                                      input: _vm.setSelectedComp,
+                                      search: _vm.onSearch
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("input", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.compoundToAdd.perc,
+                                        expression: "compoundToAdd.perc"
+                                      }
+                                    ],
+                                    ref: "cmpPerc",
+                                    refInFor: true,
+                                    staticClass: "form-control smaller-input",
+                                    staticStyle: {
+                                      margin: "0px 20px 0px 20px",
+                                      "max-width": "65px"
+                                    },
+                                    attrs: {
+                                      type: "number",
+                                      placeholder:
+                                        100 - _vm.compoundPercentageSum + " %"
+                                    },
+                                    domProps: { value: _vm.compoundToAdd.perc },
+                                    on: {
+                                      keyup: function($event) {
+                                        if (
+                                          !$event.type.indexOf("key") &&
+                                          _vm._k(
+                                            $event.keyCode,
+                                            "enter",
+                                            13,
+                                            $event.key,
+                                            "Enter"
+                                          )
+                                        ) {
+                                          return null
+                                        }
+                                        $event.preventDefault()
+                                        return _vm.addCompound()
+                                      },
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.compoundToAdd,
+                                          "perc",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c(
+                                    "button",
+                                    {
+                                      staticClass: "nowrap",
+                                      class:
+                                        _vm.addCompoundShow === true
+                                          ? "btn btn-success btn-sm"
+                                          : "btn btn-warning btn-sm",
+                                      attrs: {
+                                        disabled:
+                                          _vm.compoundPercentageSum > 100 ||
+                                          !_vm.ingredientPercentageSum.valid
+                                      },
+                                      on: { click: _vm.addCompound }
+                                    },
+                                    [
+                                      _vm._v(
+                                        "\n                                        " +
+                                          _vm._s(
+                                            _vm.addCompoundShow === true
+                                              ? "Save"
+                                              : "Add"
+                                          ) +
+                                          " Compound\n                                    "
+                                      )
+                                    ]
+                                  )
+                                ],
+                                1
+                              ),
+                              _vm._v(" "),
+                              _vm.compoundPercentageSum > 100
+                                ? _c("span", { staticClass: "text-danger" }, [
+                                    _vm._v(
+                                      "Sum of Compounds percentagemust be exactly 100."
+                                    )
+                                  ])
+                                : _vm._e()
+                            ],
+                            2
+                          )
+                        : _c(
+                            "div",
+                            _vm._l(ingredient.compound, function(compound) {
+                              return _c(
+                                "span",
+                                { key: compound.id, staticClass: "multi-wrap" },
+                                [
+                                  _vm._v(
+                                    "\n                                    " +
+                                      _vm._s(compound.name) +
+                                      " ( " +
+                                      _vm._s(compound.compound_perc) +
+                                      "% )\n                                "
+                                  )
+                                ]
+                              )
+                            }),
+                            0
+                          )
+                    ]),
                     _vm._v(" "),
                     _c("td", { staticClass: "text-right" }, [
-                      _c(
-                        "button",
-                        {
-                          staticClass: "btn btn-sm btn-primary btn-smaller",
-                          on: {
-                            click: function($event) {
-                              return _vm.showModal(ingredient)
-                            }
-                          }
-                        },
-                        [
-                          _vm._v(
-                            "\n                                Edit\n                            "
+                      _vm.editIndex === index
+                        ? _c(
+                            "div",
+                            { staticStyle: { display: "inline !important" } },
+                            [
+                              _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-sm btn-success",
+                                  on: {
+                                    click: function($event) {
+                                      _vm.editIndex = null
+                                    }
+                                  }
+                                },
+                                [_vm._v("Save")]
+                              )
+                            ]
                           )
-                        ]
-                      ),
-                      _vm._v(
-                        "\n                             \n                            "
-                      ),
-                      _c(
-                        "button",
-                        {
-                          staticClass: "btn btn-sm btn-danger btn-smaller",
-                          on: {
-                            click: function($event) {
-                              return _vm.deleteIngredient(ingredient, index)
-                            }
-                          }
-                        },
-                        [
-                          _vm._v(
-                            "\n                                Delete\n                            "
-                          )
-                        ]
-                      )
+                        : _c("div", [
+                            _c(
+                              "button",
+                              {
+                                staticClass:
+                                  "btn btn-sm btn-primary btn-smaller",
+                                on: {
+                                  click: function($event) {
+                                    return _vm.editIngredient(ingredient, index)
+                                  }
+                                }
+                              },
+                              [_vm._v(" Edit")]
+                            ),
+                            _vm._v(" \n                                "),
+                            _c(
+                              "button",
+                              {
+                                staticClass:
+                                  "btn btn-sm btn-danger btn-smaller",
+                                on: {
+                                  click: function($event) {
+                                    return _vm.deleteIngredient(
+                                      ingredient,
+                                      index
+                                    )
+                                  }
+                                }
+                              },
+                              [_vm._v(" Delete")]
+                            )
+                          ])
                     ])
                   ])
                 }),
@@ -43880,7 +44233,11 @@ var render = function() {
                             ],
                             ref: "ingPerc",
                             staticClass: "form-control smaller-input",
-                            attrs: { type: "number", placeholder: "%" },
+                            attrs: {
+                              type: "number",
+                              placeholder:
+                                100 - _vm.ingredientPercentageSum.sum + " %"
+                            },
                             domProps: { value: _vm.ingredientToAdd.perc },
                             on: {
                               keyup: function($event) {
@@ -43904,7 +44261,9 @@ var render = function() {
                                 ) {
                                   return null
                                 }
-                                return _vm.$refs.cmpAddSelect.$refs.search.focus()
+                                !_vm.ingredientPercentageSum.valid
+                                  ? false
+                                  : _vm.$refs.cmpAddSelect.$refs.search.focus()
                               },
                               input: function($event) {
                                 if ($event.target.composing) {
@@ -43943,11 +44302,11 @@ var render = function() {
                                               { staticClass: "multi-wrap" },
                                               [
                                                 _vm._v(
-                                                  "\n                                                    " +
+                                                  "\n                                                " +
                                                     _vm._s(cmp.name) +
-                                                    " (\n                                                    " +
+                                                    " (" +
                                                     _vm._s(cmp.perc) +
-                                                    " % )\n                                                "
+                                                    " % )\n                                            "
                                                 )
                                               ]
                                             ),
@@ -43963,7 +44322,11 @@ var render = function() {
                                                   }
                                                 }
                                               },
-                                              [_vm._v("Delete")]
+                                              [
+                                                _vm._v(
+                                                  "\n                                                Delete\n                                            "
+                                                )
+                                              ]
                                             ),
                                             _vm._v(" "),
                                             _c("br")
@@ -44039,7 +44402,10 @@ var render = function() {
                                               },
                                               attrs: {
                                                 type: "number",
-                                                placeholder: "%"
+                                                placeholder:
+                                                  100 -
+                                                  _vm.compoundPercentageSum +
+                                                  " %"
                                               },
                                               domProps: {
                                                 value: _vm.compoundToAdd.perc
@@ -66155,8 +66521,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /Applications/XAMPP/xamppfiles/htdocs/QaRework/resources/js/app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! /Applications/XAMPP/xamppfiles/htdocs/QaRework/resources/sass/app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! E:\www\VUE\merge\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! E:\www\VUE\merge\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
