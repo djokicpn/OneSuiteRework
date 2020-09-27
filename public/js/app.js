@@ -2602,6 +2602,17 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
  // import { MultiSelect } from "vue-search-select";
 // import { ModelListSelect } from "vue-search-select";
@@ -2689,6 +2700,11 @@ __webpack_require__.r(__webpack_exports__);
       this.ingredientToAdd.name = value.name;
       this.focusNonEmpty("value", 'ingPerc');
     },
+    setSelectedComp: function setSelectedComp(value) {
+      this.compoundToAdd.id = value.id;
+      this.compoundToAdd.name = value.name;
+      this.focusNonEmpty("value", 'cmpPerc');
+    },
     onSearch: function onSearch(search, loading) {
       loading(true);
       this.search(loading, search, this);
@@ -2715,7 +2731,6 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       if (this.addIngredient === true) if (this.ingredientToAdd.name.length === 0 || this.ingredientToAdd.perc.length === 0) {
-        console.log(ingredientToAdd);
         this.$toast.warning("Both name and percentage are mandatory!");
         return;
       }
@@ -2723,7 +2738,7 @@ __webpack_require__.r(__webpack_exports__);
       if (!this.addIngredient) {
         this.addIngredient = true;
         this.$nextTick(function () {
-          this.$refs.search.focus();
+          this.$refs.dropdown.$refs.search.focus();
         });
       } else {
         var data = {
@@ -2791,7 +2806,7 @@ __webpack_require__.r(__webpack_exports__);
       this.compoundsToAdd.push(this.compoundToAdd);
       this.$toast.open("".concat(this.compoundToAdd.name, " added to ").concat(this.ingredientToAdd.name, " as compound (").concat(this.compoundToAdd.perc, " %)"));
       this.compoundToAdd = {};
-      this.$refs.cmpAdd.focus();
+      this.$refs.cmpAddSelect.$refs.search.focus();
     },
     showModal: function showModal(ingredient) {
       this.selectedIngredient = ingredient;
@@ -2847,7 +2862,7 @@ __webpack_require__.r(__webpack_exports__);
 
       return {
         sum: sum,
-        valid: true
+        valid: sum <= 100
       };
     },
     compoundPercentageSum: function compoundPercentageSum() {
@@ -43799,43 +43814,56 @@ var render = function() {
                         _c(
                           "td",
                           [
-                            _c("v-select", {
-                              attrs: {
-                                label: "name",
-                                filterable: false,
-                                options: _vm.selectOptions
-                              },
-                              on: {
-                                keyup: function($event) {
-                                  if (
-                                    !$event.type.indexOf("key") &&
-                                    _vm._k(
-                                      $event.keyCode,
-                                      "enter",
-                                      13,
-                                      $event.key,
-                                      "Enter"
-                                    )
-                                  ) {
-                                    return null
-                                  }
-                                  if (
-                                    $event.ctrlKey ||
-                                    $event.shiftKey ||
-                                    $event.altKey ||
-                                    $event.metaKey
-                                  ) {
-                                    return null
-                                  }
-                                  return _vm.focusNonEmpty(
-                                    $event.target.value,
-                                    "ingPerc"
-                                  )
+                            _c(
+                              "v-select",
+                              {
+                                ref: "dropdown",
+                                attrs: {
+                                  label: "name",
+                                  filterable: false,
+                                  value: _vm.ingredientToAdd,
+                                  options: _vm.selectOptions
                                 },
-                                input: _vm.setSelected,
-                                search: _vm.onSearch
-                              }
-                            })
+                                on: {
+                                  keyup: function($event) {
+                                    if (
+                                      !$event.type.indexOf("key") &&
+                                      _vm._k(
+                                        $event.keyCode,
+                                        "enter",
+                                        13,
+                                        $event.key,
+                                        "Enter"
+                                      )
+                                    ) {
+                                      return null
+                                    }
+                                    if (
+                                      $event.ctrlKey ||
+                                      $event.shiftKey ||
+                                      $event.altKey ||
+                                      $event.metaKey
+                                    ) {
+                                      return null
+                                    }
+                                    return _vm.focusNonEmpty(
+                                      $event.target.value,
+                                      "ingPerc"
+                                    )
+                                  },
+                                  input: _vm.setSelected,
+                                  search: _vm.onSearch
+                                }
+                              },
+                              [
+                                _c("template", { slot: "no-options" }, [
+                                  _vm._v(
+                                    "\n                                            type to search ingredients...\n                                            "
+                                  )
+                                ])
+                              ],
+                              2
+                            )
                           ],
                           1
                         ),
@@ -43876,10 +43904,7 @@ var render = function() {
                                 ) {
                                   return null
                                 }
-                                return _vm.focusNonEmpty(
-                                  $event.target.value,
-                                  "cmpAdd"
-                                )
+                                return _vm.$refs.cmpAddSelect.$refs.search.focus()
                               },
                               input: function($event) {
                                 if ($event.target.composing) {
@@ -43949,29 +43974,17 @@ var render = function() {
                                           "div",
                                           { staticClass: "d-flex flex-nowrap" },
                                           [
-                                            _c("input", {
-                                              directives: [
-                                                {
-                                                  name: "model",
-                                                  rawName: "v-model",
-                                                  value: _vm.compoundToAdd.name,
-                                                  expression:
-                                                    "compoundToAdd.name"
-                                                }
-                                              ],
-                                              ref: "cmpAdd",
-                                              staticClass:
-                                                "form-control smaller-input",
+                                            _c("v-select", {
+                                              ref: "cmpAddSelect",
                                               staticStyle: {
-                                                "max-width": "325px"
+                                                "max-width": "325px",
+                                                "min-width": "300px"
                                               },
                                               attrs: {
-                                                type: "text",
-                                                placeholder:
-                                                  "Compound Ingredient Name"
-                                              },
-                                              domProps: {
-                                                value: _vm.compoundToAdd.name
+                                                label: "name",
+                                                filterable: false,
+                                                options: _vm.selectOptions,
+                                                value: _vm.compoundToAdd
                                               },
                                               on: {
                                                 keyup: function($event) {
@@ -44002,16 +44015,8 @@ var render = function() {
                                                     "cmpPerc"
                                                   )
                                                 },
-                                                input: function($event) {
-                                                  if ($event.target.composing) {
-                                                    return
-                                                  }
-                                                  _vm.$set(
-                                                    _vm.compoundToAdd,
-                                                    "name",
-                                                    $event.target.value
-                                                  )
-                                                }
+                                                input: _vm.setSelectedComp,
+                                                search: _vm.onSearch
                                               }
                                             }),
                                             _vm._v(" "),
@@ -44101,7 +44106,8 @@ var render = function() {
                                                 )
                                               ]
                                             )
-                                          ]
+                                          ],
+                                          1
                                         ),
                                         _vm._v(" "),
                                         _vm.compoundPercentageSum > 100
@@ -65374,8 +65380,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue_router__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue-router */ "./node_modules/vue-router/dist/vue-router.esm.js");
 /* harmony import */ var vue_toast_notification__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vue-toast-notification */ "./node_modules/vue-toast-notification/dist/index.min.js");
 /* harmony import */ var vue_toast_notification__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(vue_toast_notification__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var vue_select__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! vue-select */ "./node_modules/vue-select/dist/vue-select.js");
-/* harmony import */ var vue_select__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(vue_select__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var vue_select__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vue-select */ "./node_modules/vue-select/dist/vue-select.js");
+/* harmony import */ var vue_select__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(vue_select__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var _routes__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./routes */ "./resources/js/routes/index.js");
 /* harmony import */ var vue_sweetalert2__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vue-sweetalert2 */ "./node_modules/vue-sweetalert2/dist/index.js");
 /* harmony import */ var vue_toast_notification_dist_theme_default_css__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! vue-toast-notification/dist/theme-default.css */ "./node_modules/vue-toast-notification/dist/theme-default.css");
@@ -65392,7 +65398,7 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_toast_notification__WEBPACK_I
   pauseOnHover: true
 });
 
-vue__WEBPACK_IMPORTED_MODULE_0___default.a.component('v-select', vue_select__WEBPACK_IMPORTED_MODULE_8___default.a);
+vue__WEBPACK_IMPORTED_MODULE_0___default.a.component('v-select', vue_select__WEBPACK_IMPORTED_MODULE_4___default.a);
 
 
 
@@ -66149,8 +66155,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! E:\www\VUE\merge\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! E:\www\VUE\merge\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! /Applications/XAMPP/xamppfiles/htdocs/QaRework/resources/js/app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! /Applications/XAMPP/xamppfiles/htdocs/QaRework/resources/sass/app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

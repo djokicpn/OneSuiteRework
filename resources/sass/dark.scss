@@ -2,7 +2,7 @@ $bodyColor: #343a40;
 $boxColor: #1c1e25;
 $boxColorWhite: #f9fafa;
 $inputBackground: #15161c;
-$baseText: #f8fafc;
+$baseText: #d3d3d3;
 
 [data-theme="dark"] {
     .v-select {
@@ -16,6 +16,9 @@ $baseText: #f8fafc;
     }
     .vs__dropdown-option {
         color: $baseText !important;
+    }
+    .vs__open-indicator {
+        fill: #d3d3d3 !important;
     }
 
 

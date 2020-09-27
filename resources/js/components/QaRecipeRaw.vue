@@ -79,9 +79,17 @@
 <!--                                    ref="search"-->
 <!--                                />-->
                                 <v-select label="name" :filterable="false"
+                                          :value='ingredientToAdd'
                                           :options="selectOptions"
                                           @keyup.enter.exact="focusNonEmpty($event.target.value,'ingPerc')"
-                                          @input="setSelected" @search="onSearch"> </v-select>
+                                          @input="setSelected"
+                                          @search="onSearch"
+                                          ref="dropdown"
+                                          >
+                                          <template slot="no-options">
+                                            type to search ingredients...
+                                            </template>
+                                </v-select>
                             </td>
 
 
@@ -91,12 +99,7 @@
                                     class="form-control smaller-input"
                                     placeholder="%"
                                     ref="ingPerc"
-                                    @keyup.enter.exact="
-                                            focusNonEmpty(
-                                                $event.target.value,
-                                                'cmpAdd'
-                                            )
-                                        "
+                                    @keyup.enter.exact="$refs.cmpAddSelect.$refs.search.focus()"
                                     v-model="ingredientToAdd.perc"
                                 />
                             </td>
@@ -127,7 +130,7 @@
                                             <br/>
                                         </template>
                                         <div class="d-flex flex-nowrap">
-                                            <input
+                                            <!-- <input
                                                 type="text"
                                                 class="form-control smaller-input"
                                                 placeholder="Compound Ingredient Name"
@@ -140,7 +143,15 @@
                                                         )
                                                     "
                                                 ref="cmpAdd"
-                                            />
+                                            /> -->
+                                            <v-select style="max-width: 325px; min-width:300px" label="name" :filterable="false"
+                                                    :options="selectOptions"
+                                                    :value="compoundToAdd"
+                                                    @keyup.enter.exact="focusNonEmpty($event.target.value,'cmpPerc')"
+                                                    @input="setSelectedComp"
+                                                    @search="onSearch"
+                                                    ref="cmpAddSelect">
+                                            </v-select>
                                             <input
                                                 type="number"
                                                 class="form-control smaller-input"
@@ -170,7 +181,7 @@
                     <tr v-if="ingredients.length > 0">
                         <td></td>
                         <td class="text-right"><b>TOTAL:</b></td>
-                        <td :class="!ingredientPercentageSum.valid? 'text-danger': '' ">
+                        <td :class="!ingredientPercentageSum.valid ? 'text-danger': '' ">
                             {{ ingredientPercentageSum.sum }} %
                         </td>
                     </tr>
@@ -439,6 +450,13 @@ export default {
             this.focusNonEmpty("value",'ingPerc')
 
         },
+        setSelectedComp(value) {
+
+            this.compoundToAdd.id = value.id
+            this.compoundToAdd.name = value.name
+            this.focusNonEmpty("value",'cmpPerc')
+
+        },
         onSearch(search, loading) {
             loading(true);
             this.search(loading, search, this);
@@ -457,22 +475,22 @@ export default {
                     this.$refs[ref].focus();
                 });
         },
-        addIngredientSubmit() {
+        addIngredientSubmit () {
             if (!this.ingredientPercentageSum.valid) {
                 this.$toast.warning(`Ingredient total can't exceed 100. You are ${this.ingredientPercentageSum.sum - 100} over a value!`);
                 return
             }
             if (this.addIngredient === true)
                 if (this.ingredientToAdd.name.length === 0 || this.ingredientToAdd.perc.length === 0) {
-                    console.log(ingredientToAdd)
                     this.$toast.warning(`Both name and percentage are mandatory!`);
                     return
                 }
             if (!this.addIngredient) {
                 this.addIngredient = true;
                 this.$nextTick(function () {
-                    this.$refs.search.focus();
+                    this.$refs.dropdown.$refs.search.focus()
                 });
+
             } else {
                 let data = {
                     ingredient: this.ingredientToAdd,
@@ -530,7 +548,7 @@ export default {
             this.compoundsToAdd.push(this.compoundToAdd);
             this.$toast.open(`${this.compoundToAdd.name} added to ${this.ingredientToAdd.name} as compound (${this.compoundToAdd.perc} %)`);
             this.compoundToAdd = {};
-            this.$refs.cmpAdd.focus();
+            this.$refs.cmpAddSelect.$refs.search.focus()
 
 
         },
@@ -583,7 +601,7 @@ export default {
             }
             return {
                 sum: sum,
-                valid: true
+                valid: sum <= 100
             };
         },
         compoundPercentageSum() {
