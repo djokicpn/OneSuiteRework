@@ -2663,7 +2663,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 
  // import { MultiSelect } from "vue-search-select";
 // import { ModelListSelect } from "vue-search-select";
@@ -2712,16 +2711,7 @@ __webpack_require__.r(__webpack_exports__);
       addCompoundShow: false,
       // percentageError: false,
       selectedIngredient: {},
-      countries: [{
-        id: 1,
-        name: "USA"
-      }, {
-        id: 2,
-        name: "CAD"
-      }, {
-        id: 3,
-        name: "SRB"
-      }],
+      countries: {},
       options: [{
         value: "1",
         text: "aa" + " - " + "1"
@@ -2749,8 +2739,24 @@ __webpack_require__.r(__webpack_exports__);
   },
   mounted: function mounted() {
     this.loadIngredients();
+    this.loadCountries();
   },
   methods: {
+    updateIngredientField: function updateIngredientField(item_id, ingredient, field, value) {
+      var _this = this;
+
+      var data = {
+        item_id: item_id,
+        ingredient_id: ingredient.id,
+        field: field,
+        value: value
+      };
+      axios.post("/api/ingredients/update-field", {
+        data: data
+      }).then(function (response) {
+        _this.$toast.success("".concat(ingredient.name, " updated!"));
+      });
+    },
     editingIngredient: function editingIngredient(index) {
       return index === this.editIndex;
     },
@@ -2787,7 +2793,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     addIngredientSubmit: function addIngredientSubmit() {
-      var _this = this;
+      var _this2 = this;
 
       if (!this.ingredientPercentageSum.valid) {
         this.$toast.warning("Ingredient total can't exceed 100. You are ".concat(this.ingredientPercentageSum.sum - 100, " over a value!"));
@@ -2813,17 +2819,17 @@ __webpack_require__.r(__webpack_exports__);
         axios.post("/api/ingredients/save", {
           data: data
         }).then(function (response) {
-          _this.$toast.open("".concat(_this.ingredientToAdd.name, " ingredient successfuly added!"));
+          _this2.$toast.open("".concat(_this2.ingredientToAdd.name, " ingredient successfuly added!"));
 
-          _this.ingredients = response.data.data;
+          _this2.ingredients = response.data.data;
 
-          _this.loadIngredients();
+          _this2.loadIngredients();
 
-          _this.addCompoundShow = false;
-          _this.compoundsToAdd = [];
-          _this.addIngredient = false;
-          _this.ingredientToAdd.name = '';
-          _this.ingredientToAdd.perc = null;
+          _this2.addCompoundShow = false;
+          _this2.compoundsToAdd = [];
+          _this2.addIngredient = false;
+          _this2.ingredientToAdd.name = '';
+          _this2.ingredientToAdd.perc = null;
         });
       }
     },
@@ -2838,7 +2844,7 @@ __webpack_require__.r(__webpack_exports__);
       this.ingredientToEdit.compound.splice(index, 1);
     },
     deleteIngredient: function deleteIngredient(ing, index) {
-      var _this2 = this;
+      var _this3 = this;
 
       this.$swal({
         icon: 'warning',
@@ -2850,15 +2856,15 @@ __webpack_require__.r(__webpack_exports__);
         confirmButtonText: 'Yes, delete it!'
       }).then(function (result) {
         if (result.value) {
-          _this2.loadingIngredients = true;
+          _this3.loadingIngredients = true;
           axios.post('/api/ingredients/delete', {
             id: ing.id
           }).then(function (response) {
-            _this2.$toast.open("".concat(ing.name, " successfuly deleted!"));
+            _this3.$toast.open("".concat(ing.name, " successfuly deleted!"));
 
-            _this2.ingredients.splice(index, 1);
+            _this3.ingredients.splice(index, 1);
 
-            _this2.loadIngredients(); // this.loadingIngredients = false;
+            _this3.loadIngredients(); // this.loadingIngredients = false;
 
           });
         }
@@ -2881,18 +2887,18 @@ __webpack_require__.r(__webpack_exports__);
       this.modalVisible = true;
     },
     loadIngredients: function loadIngredients() {
-      var _this3 = this;
+      var _this4 = this;
 
       axios.get("/api/ingredients/list").then(function (response) {
-        _this3.ingredients = response.data.data;
-        _this3.loadingIngredients = false;
+        _this4.ingredients = response.data.data;
+        _this4.loadingIngredients = false;
       });
     },
     loadCountries: function loadCountries() {
-      var _this4 = this;
+      var _this5 = this;
 
       axios.get("/api/countries/list").then(function (response) {
-        _this4.ingredients = response.data.data;
+        _this5.countries = response.data.data;
       });
     },
     onSelect: function onSelect(items, lastSelectItem) {
@@ -44586,7 +44592,17 @@ var render = function() {
                         _c("input", {
                           staticClass: "form-control",
                           attrs: { type: "text", placeholder: "Supplier name" },
-                          domProps: { value: ingredient.supplier }
+                          domProps: { value: ingredient.supplier },
+                          on: {
+                            blur: function($event) {
+                              return _vm.updateIngredientField(
+                                1,
+                                ingredient,
+                                "ingredient_supplier",
+                                $event.target.value
+                              )
+                            }
+                          }
                         })
                       ]),
                       _vm._v(" "),
@@ -44594,20 +44610,43 @@ var render = function() {
                         _c("input", {
                           staticClass: "form-control",
                           attrs: { type: "text", placeholder: "Location" },
-                          domProps: { value: ingredient.location }
+                          domProps: { value: ingredient.location },
+                          on: {
+                            blur: function($event) {
+                              return _vm.updateIngredientField(
+                                1,
+                                ingredient,
+                                "site_location_address",
+                                $event.target.value
+                              )
+                            }
+                          }
                         })
                       ]),
                       _vm._v(" "),
                       _c("td", [
                         _c(
                           "select",
-                          { staticClass: "form-control", attrs: { name: "" } },
+                          {
+                            staticClass: "form-control",
+                            attrs: { name: "" },
+                            on: {
+                              change: function($event) {
+                                return _vm.updateIngredientField(
+                                  1,
+                                  ingredient,
+                                  "country_of_origin",
+                                  $event.target.value
+                                )
+                              }
+                            }
+                          },
                           [
-                            _c("option", { attrs: { value: "999" } }, [
-                              _vm._v(
-                                "Please select\n                                    "
-                              )
-                            ]),
+                            _c(
+                              "option",
+                              { attrs: { value: "999", selected: "" } },
+                              [_vm._v("Please select")]
+                            ),
                             _vm._v(" "),
                             _vm._l(_vm.countries, function(country) {
                               return _c(
@@ -44617,10 +44656,11 @@ var render = function() {
                                   domProps: {
                                     value: country.id,
                                     selected:
-                                      country.id === 1 && country.id
+                                      ingredient.origin_country === country.id
                                         ? "selected"
                                         : ""
-                                  }
+                                  },
+                                  on: { "": function($event) {} }
                                 },
                                 [
                                   _vm._v(
@@ -44636,7 +44676,58 @@ var render = function() {
                         )
                       ]),
                       _vm._v(" "),
-                      _vm._m(5, true)
+                      _c("td", [
+                        _c(
+                          "select",
+                          {
+                            staticClass: "form-control",
+                            attrs: { name: "" },
+                            on: {
+                              change: function($event) {
+                                return _vm.updateIngredientField(
+                                  1,
+                                  ingredient,
+                                  "country_where_processed",
+                                  $event.target.value
+                                )
+                              }
+                            }
+                          },
+                          [
+                            _c(
+                              "option",
+                              { attrs: { value: "999", selected: "" } },
+                              [_vm._v("Please select")]
+                            ),
+                            _vm._v(" "),
+                            _vm._l(_vm.countries, function(country) {
+                              return _c(
+                                "option",
+                                {
+                                  key: country.id,
+                                  domProps: {
+                                    value: country.id,
+                                    selected:
+                                      ingredient.processed_country ===
+                                      country.id
+                                        ? "selected"
+                                        : ""
+                                  },
+                                  on: { "": function($event) {} }
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                                        " +
+                                      _vm._s(country.name) +
+                                      "\n                                    "
+                                  )
+                                ]
+                              )
+                            })
+                          ],
+                          2
+                        )
+                      ])
                     ]),
                     _vm._v(" "),
                     _vm._l(ingredient.compound, function(
@@ -44702,9 +44793,7 @@ var render = function() {
                             },
                             [
                               _c("option", { attrs: { value: "999" } }, [
-                                _vm._v(
-                                  "Please select\n                                    "
-                                )
+                                _vm._v("Please select")
                               ]),
                               _vm._v(" "),
                               _vm._l(_vm.countries, function(country) {
@@ -44715,7 +44804,7 @@ var render = function() {
                                     domProps: {
                                       value: country.id,
                                       selected:
-                                        country.id === 1 && country.id
+                                        compound.origin_country === country.id
                                           ? "selected"
                                           : ""
                                     }
@@ -44734,7 +44823,7 @@ var render = function() {
                           )
                         ]),
                         _vm._v(" "),
-                        _vm._m(6, true)
+                        _vm._m(5, true)
                       ])
                     })
                   ]
@@ -44948,18 +45037,6 @@ var staticRenderFns = [
       _c("th", [_vm._v("Country of Origin")]),
       _vm._v(" "),
       _c("th", [_vm._v("Country Where Processed (if different)")])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("td", [
-      _c("select", { staticClass: "form-control", attrs: { name: "" } }, [
-        _c("option", { attrs: { value: "999" } }, [
-          _vm._v("Please select\n                                    ")
-        ])
-      ])
     ])
   },
   function() {
@@ -66521,8 +66598,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! E:\www\VUE\merge\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! E:\www\VUE\merge\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! /Applications/XAMPP/xamppfiles/htdocs/QaRework/resources/js/app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! /Applications/XAMPP/xamppfiles/htdocs/QaRework/resources/sass/app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

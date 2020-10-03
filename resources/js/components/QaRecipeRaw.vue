@@ -64,7 +64,7 @@
                             </div>
                         </td>
                         <td>
-                             
+
                             <div v-if="editIndex === index">
                                 <template style="margin-bottom: 5px !important" v-for="(cmp, index) in ingredientToEdit.compound" >
                                     <span class="multi-wrap">
@@ -280,6 +280,7 @@
                                     class="form-control"
                                     :value="ingredient.supplier"
                                     placeholder="Supplier name"
+                                    @blur="updateIngredientField(1,ingredient,'ingredient_supplier',$event.target.value)"
                                 />
                             </td>
                             <td>
@@ -288,27 +289,32 @@
                                     class="form-control"
                                     :value="ingredient.location"
                                     placeholder="Location"
+                                    @blur="updateIngredientField(1,ingredient,'site_location_address',$event.target.value)"
                                 />
                             </td>
                             <td>
-                                <select name="" class="form-control">
-                                    <option value="999"
-                                    >Please select
-                                    </option
-                                    >
+                                <select name="" class="form-control" @change="updateIngredientField(1,ingredient,'country_of_origin',$event.target.value)">
+                                    <option value="999" selected>Please select</option>
                                     <option
                                         v-for="country in countries"
                                         :value="country.id"
                                         :key="country.id"
-                                        v-bind:selected="country.id === 1 && country.id ? 'selected' : '' ">
+                                        @
+                                        v-bind:selected="ingredient.origin_country === country.id ? 'selected' : '' ">
                                         {{ country.name }}
                                     </option>
                                 </select>
                             </td>
                             <td>
-                                <select name="" class="form-control">
-                                    <option value="999"
-                                    >Please select
+                                <select name="" class="form-control" @change="updateIngredientField(1,ingredient,'country_where_processed',$event.target.value)">
+                                    <option value="999" selected>Please select</option>
+                                    <option
+                                        v-for="country in countries"
+                                        :value="country.id"
+                                        :key="country.id"
+                                        @
+                                        v-bind:selected="ingredient.processed_country === country.id ? 'selected' : '' ">
+                                        {{ country.name }}
                                     </option>
                                 </select>
                             </td>
@@ -343,15 +349,12 @@
                             </td>
                             <td>
                                 <select name="" class="form-control">
-                                    <option value="999"
-                                    >Please select
-                                    </option
-                                    >
+                                    <option value="999">Please select</option>
                                     <option
                                         v-for="country in countries"
                                         :value="country.id"
                                         :key="country.id"
-                                        v-bind:selected="country.id === 1 && country.id? 'selected': ''">
+                                        v-bind:selected="compound.origin_country === country.id? 'selected': ''">
                                         {{ country.name }}
                                     </option>
                                 </select>
@@ -379,11 +382,7 @@
                     </button>
                 </router-link>
                 <router-link :to="{ name: 'qa-ingredient-dec' }">
-                    <button
-                        type="button"
-                        class="btn btn-primary "
-                        @click="validatePage($event)"
-                    >
+                    <button type="button" class="btn btn-primary " @click="validatePage($event)">
                         Next
                     </button>
                 </router-link>
@@ -463,7 +462,7 @@ export default {
             ingredientToAdd: {
                 name: "",
                 perc: "",
-            }, 
+            },
             ingredientToEdit: {
                 name: "",
                 perc: "",
@@ -472,11 +471,7 @@ export default {
             addCompoundShow: false,
             // percentageError: false,
             selectedIngredient: {},
-            countries: [
-                {id: 1, name: "USA"},
-                {id: 2, name: "CAD"},
-                {id: 3, name: "SRB"}
-            ],
+            countries: {},
             options: [
                 {value: "1", text: "aa" + " - " + "1"},
                 {value: "2", text: "ab" + " - " + "2"},
@@ -496,8 +491,21 @@ export default {
     },
     mounted() {
         this.loadIngredients();
+        this.loadCountries();
     },
     methods: {
+        updateIngredientField(item_id,ingredient,field,value) {
+            let data = {
+                item_id: item_id,
+                ingredient_id: ingredient.id,
+                field: field,
+                value: value
+            }
+
+            axios.post("/api/ingredients/update-field", {data: data}).then(response => {
+                this.$toast.success(`${ingredient.name} updated!`);
+            });
+        },
         editingIngredient(index) {
             return index === this.editIndex;
         },
@@ -632,7 +640,7 @@ export default {
         },
         loadCountries() {
             axios.get("/api/countries/list").then(response => {
-                this.ingredients = response.data.data;
+                this.countries = response.data.data;
             });
         },
         onSelect(items, lastSelectItem) {
@@ -655,7 +663,7 @@ export default {
         }
     },
     computed: {
-   
+
         ingredientPercentageSum() {
             console.log('event fired')
             let sum = 0;

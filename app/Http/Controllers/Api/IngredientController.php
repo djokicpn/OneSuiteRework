@@ -59,7 +59,7 @@ class IngredientController extends Controller
 
         return response()->json('Done!', 200);
     }
-    public function delete(Request $request)
+    public function delete()
     {
         $item = Item::find(1);
         $ing = NotAllowedIngredientSingle::find(request()->id);
@@ -68,5 +68,15 @@ class IngredientController extends Controller
         $item->rawIngredients()->detach($ing);
 
         return response()->json(request()->id, 200);
+    }
+    public function updateField(Request $request) {
+        $item = Item::find(request()->data['item_id']);
+        $ing = $item->rawIngredients()->where('ingredient_id',request()->data['ingredient_id'])->first();
+        $field = request()->data['field'];
+        $value = request()->data['value'];
+        $ing->pivot->$field = $value;
+        $ing->pivot->save();
+
+        return response()->json($ing->pivot,200);
     }
 }

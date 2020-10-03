@@ -22,7 +22,7 @@ class IngredientResource extends JsonResource
             'name' => $this->name,
             'location' => $this->pivot->site_location_address,
             'supplier'=> $this->pivot->ingredient_supplier,
-            'origin_country'=> $this->pivot->origin_country,
+            'origin_country'=> $this->pivot->country_of_origin,
             'processed_country'=> $this->pivot->country_where_processed,
             'compound' => IngredientResource::collection($this->compounds),
             'created_at' => $this->created_at->toDateString()
