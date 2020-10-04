@@ -2663,6 +2663,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
  // import { MultiSelect } from "vue-search-select";
 // import { ModelListSelect } from "vue-search-select";
@@ -2742,19 +2748,44 @@ __webpack_require__.r(__webpack_exports__);
     this.loadCountries();
   },
   methods: {
-    updateIngredientField: function updateIngredientField(item_id, ingredient, field, value) {
+    updateIngredientField: function updateIngredientField(ingredient, field, value) {
       var _this = this;
 
+      var compoundIng = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
       var data = {
-        item_id: item_id,
+        item_id: 1,
         ingredient_id: ingredient.id,
         field: field,
-        value: value
+        value: value,
+        compound: compoundIng
       };
+      var fieldName = ""; // ingredient_supplier,site_location_address country_of_origin country_where_processed
+
+      switch (field) {
+        case 'ingredient_supplier':
+          fieldName = 'Supplier';
+          break;
+
+        case 'site_location_address':
+          fieldName = 'Supplier Site Location';
+          break;
+
+        case 'country_of_origin':
+          fieldName = "Country Of Origin";
+          break;
+
+        case 'country_where_processed':
+          fieldName = "Country Where Processed";
+          break;
+
+        default:
+          return 'N/A';
+      }
+
       axios.post("/api/ingredients/update-field", {
         data: data
       }).then(function (response) {
-        _this.$toast.success("".concat(ingredient.name, " updated!"));
+        _this.$toast.success("".concat(ingredient.name, "'s <b>").concat(fieldName, "</b> updated to ").concat(value, "!"));
       });
     },
     editingIngredient: function editingIngredient(index) {
@@ -44596,7 +44627,6 @@ var render = function() {
                           on: {
                             blur: function($event) {
                               return _vm.updateIngredientField(
-                                1,
                                 ingredient,
                                 "ingredient_supplier",
                                 $event.target.value
@@ -44614,7 +44644,6 @@ var render = function() {
                           on: {
                             blur: function($event) {
                               return _vm.updateIngredientField(
-                                1,
                                 ingredient,
                                 "site_location_address",
                                 $event.target.value
@@ -44633,7 +44662,6 @@ var render = function() {
                             on: {
                               change: function($event) {
                                 return _vm.updateIngredientField(
-                                  1,
                                   ingredient,
                                   "country_of_origin",
                                   $event.target.value
@@ -44685,7 +44713,6 @@ var render = function() {
                             on: {
                               change: function($event) {
                                 return _vm.updateIngredientField(
-                                  1,
                                   ingredient,
                                   "country_where_processed",
                                   $event.target.value
@@ -44765,31 +44792,61 @@ var render = function() {
                           )
                         ]),
                         _vm._v(" "),
-                        _c("td", [
+                        _c("td", { staticClass: "p-l-5" }, [
                           _c("input", {
-                            staticClass: "form-control",
+                            staticClass: "form-control smaller-input",
                             attrs: {
                               type: "text",
                               placeholder: "Supplier name"
                             },
-                            domProps: { value: compound.supplier }
+                            domProps: { value: compound.supplier },
+                            on: {
+                              blur: function($event) {
+                                return _vm.updateIngredientField(
+                                  ingredient,
+                                  "ingredient_supplier",
+                                  $event.target.value,
+                                  compound.id
+                                )
+                              }
+                            }
                           })
                         ]),
                         _vm._v(" "),
-                        _c("td", [
+                        _c("td", { staticClass: "p-l-5" }, [
                           _c("input", {
-                            staticClass: "form-control",
+                            staticClass: "form-control smaller-input",
                             attrs: { type: "text", placeholder: "Location" },
-                            domProps: { value: compound.location }
+                            domProps: { value: compound.location },
+                            on: {
+                              blur: function($event) {
+                                return _vm.updateIngredientField(
+                                  ingredient,
+                                  "site_location_address",
+                                  $event.target.value,
+                                  compound.id
+                                )
+                              }
+                            }
                           })
                         ]),
                         _vm._v(" "),
-                        _c("td", [
+                        _c("td", { staticClass: "p-l-5" }, [
                           _c(
                             "select",
                             {
-                              staticClass: "form-control",
-                              attrs: { name: "" }
+                              staticClass: "form-control smaller-input",
+                              attrs: { name: "" },
+                              on: {
+                                change: function($event) {
+                                  return _vm.updateIngredientField(
+                                    ingredient,
+                                    "country_of_origin",
+                                    $event.target.value,
+                                    compound.id
+                                  )
+                                }
+                              }
                             },
                             [
                               _c("option", { attrs: { value: "999" } }, [
@@ -44823,7 +44880,56 @@ var render = function() {
                           )
                         ]),
                         _vm._v(" "),
-                        _vm._m(5, true)
+                        _c("td", { staticClass: "p-l-5" }, [
+                          _c(
+                            "select",
+                            {
+                              staticClass: "form-control smaller-input",
+                              attrs: { name: "" },
+                              on: {
+                                change: function($event) {
+                                  return _vm.updateIngredientField(
+                                    ingredient,
+                                    "country_where_processed",
+                                    $event.target.value,
+                                    compound.id
+                                  )
+                                }
+                              }
+                            },
+                            [
+                              _vm._v(">\n                                    "),
+                              _c("option", { attrs: { value: "999" } }, [
+                                _vm._v("Please select")
+                              ]),
+                              _vm._v(" "),
+                              _vm._l(_vm.countries, function(country) {
+                                return _c(
+                                  "option",
+                                  {
+                                    key: country.id,
+                                    domProps: {
+                                      value: country.id,
+                                      selected:
+                                        compound.processed_country ===
+                                        country.id
+                                          ? "selected"
+                                          : ""
+                                    }
+                                  },
+                                  [
+                                    _vm._v(
+                                      "\n                                        " +
+                                        _vm._s(country.name) +
+                                        "\n                                    "
+                                    )
+                                  ]
+                                )
+                              })
+                            ],
+                            2
+                          )
+                        ])
                       ])
                     })
                   ]
@@ -45037,18 +45143,6 @@ var staticRenderFns = [
       _c("th", [_vm._v("Country of Origin")]),
       _vm._v(" "),
       _c("th", [_vm._v("Country Where Processed (if different)")])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("td", [
-      _c("select", { staticClass: "form-control", attrs: { name: "" } }, [
-        _c("option", { attrs: { value: "999" } }, [
-          _vm._v("Please select\n                                    ")
-        ])
-      ])
     ])
   }
 ]
@@ -66598,8 +66692,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /Applications/XAMPP/xamppfiles/htdocs/QaRework/resources/js/app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! /Applications/XAMPP/xamppfiles/htdocs/QaRework/resources/sass/app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! E:\www\VUE\merge\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! E:\www\VUE\merge\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

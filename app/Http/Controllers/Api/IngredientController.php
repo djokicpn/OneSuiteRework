@@ -8,6 +8,7 @@ use App\Ingredient;
 use App\Item;
 use App\NotAllowedIngredientSingle;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class IngredientController extends Controller
 {
@@ -40,7 +41,6 @@ class IngredientController extends Controller
 
         $item->rawIngredients()->attach($toRet);
 
-
         foreach ($cmp as $compound) {
             $toSync = new NotAllowedIngredientSingle();
             $toSync->name = $compound['name'];
@@ -70,13 +70,23 @@ class IngredientController extends Controller
         return response()->json(request()->id, 200);
     }
     public function updateField(Request $request) {
+
         $item = Item::find(request()->data['item_id']);
-        $ing = $item->rawIngredients()->where('ingredient_id',request()->data['ingredient_id'])->first();
+        $ingId = request()->data['ingredient_id'];
         $field = request()->data['field'];
         $value = request()->data['value'];
-        $ing->pivot->$field = $value;
-        $ing->pivot->save();
+        $compound = request()->data['compound'];
+        
 
-        return response()->json($ing->pivot,200);
+        $ing = $item->rawIngredients()->where('ingredient_id',$ingId)->first();
+
+        if(!$compound)
+            $ing->pivot->update([$field => $value]);
+        else {
+            $cmp = $ing->compounds->where('id',$compound)->first();
+            $cmp->pivot->update([$field => $value]);
+        }
+        
+        return response()->json('Ok',200);
     }
 }

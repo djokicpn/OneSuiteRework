@@ -280,7 +280,7 @@
                                     class="form-control"
                                     :value="ingredient.supplier"
                                     placeholder="Supplier name"
-                                    @blur="updateIngredientField(1,ingredient,'ingredient_supplier',$event.target.value)"
+                                    @blur="updateIngredientField(ingredient,'ingredient_supplier',$event.target.value)"
                                 />
                             </td>
                             <td>
@@ -289,11 +289,11 @@
                                     class="form-control"
                                     :value="ingredient.location"
                                     placeholder="Location"
-                                    @blur="updateIngredientField(1,ingredient,'site_location_address',$event.target.value)"
+                                    @blur="updateIngredientField(ingredient,'site_location_address',$event.target.value)"
                                 />
                             </td>
                             <td>
-                                <select name="" class="form-control" @change="updateIngredientField(1,ingredient,'country_of_origin',$event.target.value)">
+                                <select name="" class="form-control" @change="updateIngredientField(ingredient,'country_of_origin',$event.target.value)">
                                     <option value="999" selected>Please select</option>
                                     <option
                                         v-for="country in countries"
@@ -306,7 +306,7 @@
                                 </select>
                             </td>
                             <td>
-                                <select name="" class="form-control" @change="updateIngredientField(1,ingredient,'country_where_processed',$event.target.value)">
+                                <select name="" class="form-control" @change="updateIngredientField(ingredient,'country_where_processed',$event.target.value)">
                                     <option value="999" selected>Please select</option>
                                     <option
                                         v-for="country in countries"
@@ -331,24 +331,26 @@
                             <td>
                                 {{((ingredient.perc *compound.compound_perc) / 100).toFixed(2)}} %
                             </td>
-                            <td>
+                            <td class="p-l-5">
                                 <input
                                     type="text"
-                                    class="form-control"
+                                    class="form-control smaller-input"
                                     :value="compound.supplier"
                                     placeholder="Supplier name"
+                                    @blur="updateIngredientField(ingredient,'ingredient_supplier',$event.target.value,compound.id)"
                                 />
                             </td>
-                            <td>
+                            <td class="p-l-5">
                                 <input
                                     type="text"
-                                    class="form-control"
+                                    class="form-control smaller-input"
                                     :value="compound.location"
                                     placeholder="Location"
+                                    @blur="updateIngredientField(ingredient,'site_location_address',$event.target.value,compound.id)"
                                 />
                             </td>
-                            <td>
-                                <select name="" class="form-control">
+                            <td class="p-l-5">
+                                <select name="" class="form-control smaller-input" @change="updateIngredientField(ingredient,'country_of_origin',$event.target.value,compound.id)" >
                                     <option value="999">Please select</option>
                                     <option
                                         v-for="country in countries"
@@ -359,12 +361,16 @@
                                     </option>
                                 </select>
                             </td>
-                            <td>
-                                <select name="" class="form-control">
-                                    <option value="999"
-                                    >Please select
-                                    </option
-                                    >
+                            <td class="p-l-5">
+                                <select name="" class="form-control smaller-input" @change="updateIngredientField(ingredient,'country_where_processed',$event.target.value,compound.id)" >>
+                                    <option value="999">Please select</option>
+                                    <option
+                                        v-for="country in countries"
+                                        :value="country.id"
+                                        :key="country.id"
+                                        v-bind:selected="compound.processed_country === country.id? 'selected': ''">
+                                        {{ country.name }}
+                                    </option>
                                 </select>
                             </td>
                         </tr>
@@ -494,16 +500,36 @@ export default {
         this.loadCountries();
     },
     methods: {
-        updateIngredientField(item_id,ingredient,field,value) {
+        updateIngredientField(ingredient,field,value, compoundIng = null) {
             let data = {
-                item_id: item_id,
+                item_id: 1,
                 ingredient_id: ingredient.id,
                 field: field,
-                value: value
+                value: value,
+                compound: compoundIng
+            }
+            let fieldName = "";
+            // ingredient_supplier,site_location_address country_of_origin country_where_processed
+            switch(field) {
+                case 'ingredient_supplier': 
+                    fieldName = 'Supplier'
+                    break;
+                case 'site_location_address':
+                    fieldName = 'Supplier Site Location';
+                    break;
+                case 'country_of_origin':
+                    fieldName = "Country Of Origin";
+                    break;
+                case 'country_where_processed': 
+                    fieldName = "Country Where Processed"
+                    break;
+                default:
+                    return 'N/A'
+
             }
 
             axios.post("/api/ingredients/update-field", {data: data}).then(response => {
-                this.$toast.success(`${ingredient.name} updated!`);
+                this.$toast.success(`${ingredient.name}'s <b>${fieldName}</b> updated to ${value}!`);
             });
         },
         editingIngredient(index) {
