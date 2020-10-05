@@ -510,6 +510,8 @@ export default {
             }
             let fieldName = "";
             // ingredient_supplier,site_location_address country_of_origin country_where_processed
+
+            //Field names (should be handled on backend instead)
             switch(field) {
                 case 'ingredient_supplier': 
                     fieldName = 'Supplier'
