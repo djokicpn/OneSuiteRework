@@ -27,6 +27,8 @@ class IngredientController extends Controller
     }
     public function save(Request $request)
     {
+        //update
+
         $item = Item::find(1);
         $data = request()->data;
         $cmp = $data['compounds'];
@@ -76,7 +78,7 @@ class IngredientController extends Controller
         $field = request()->data['field'];
         $value = request()->data['value'];
         $compound = request()->data['compound'];
-        
+
 
         $ing = $item->rawIngredients()->where('ingredient_id',$ingId)->first();
 
@@ -86,7 +88,7 @@ class IngredientController extends Controller
             $cmp = $ing->compounds->where('id',$compound)->first();
             $cmp->pivot->update([$field => $value]);
         }
-        
+
         return response()->json('Ok',200);
     }
 }
